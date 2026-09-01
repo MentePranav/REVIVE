@@ -49,6 +49,7 @@ data/*.parquet
 data/processed/
 data/raw/
 data/simulated/
+data/evaluations/
 !data/.gitkeep
 
 # Logs & Temporary Artifacts
