@@ -1,0 +1,57 @@
+﻿# Default Simulator Configuration for REVIVE
+simulation:
+  default_transactions: 10000
+  default_customers: 2000
+  default_seed: 42
+  currency: "INR"
+  start_date: "2026-01-01T00:00:00Z"
+  simulation_days: 90
+
+customer_profiles:
+  proportions:
+    PROFILE_A_RELIABLE: 0.35
+    PROFILE_B_OCCASIONAL_FAILURE: 0.25
+    PROFILE_C_HIGH_FAILURE: 0.10
+    PROFILE_D_NEW_CUSTOMER: 0.10
+    PROFILE_E_SUBSCRIPTION: 0.12
+    PROFILE_F_HIGH_VALUE: 0.08
+
+payment_methods:
+  proportions:
+    UPI: 0.55
+    CARD: 0.25
+    NETBANKING: 0.12
+    WALLET: 0.08
+
+status_targets:
+  SUCCESS: 0.80
+  FAILED: 0.14
+  ABANDONED: 0.06
+
+failure_categories:
+  weights:
+    TRANSIENT_GATEWAY_FAILURE: 0.28
+    BANK_DECLINE: 0.22
+    INSUFFICIENT_FUNDS: 0.20
+    AUTHENTICATION_FAILURE: 0.14
+    PAYMENT_METHOD_FAILURE: 0.08
+    HARD_FAILURE: 0.05
+    HIGH_RISK: 0.03
+
+amount_tiers:
+  micro:
+    min: 49.0
+    max: 499.0
+    weight: 0.35
+  small:
+    min: 500.0
+    max: 1999.0
+    weight: 0.30
+  medium:
+    min: 2000.0
+    max: 9999.0
+    weight: 0.25
+  large:
+    min: 10000.0
+    max: 150000.0
+    weight: 0.10
