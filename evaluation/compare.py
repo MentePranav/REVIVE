@@ -17,7 +17,12 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
         pass
 
 from evaluation.pipeline import EvaluationPipeline
-from evaluation.strategies import NaiveRetryStrategy, NoActionStrategy, RuleBasedStrategy
+from evaluation.strategies import (
+    NaiveRetryStrategy,
+    NoActionStrategy,
+    ReviveStrategy,
+    RuleBasedStrategy,
+)
 
 
 def main():
@@ -30,6 +35,7 @@ def main():
         NoActionStrategy(),
         NaiveRetryStrategy(),
         RuleBasedStrategy(),
+        ReviveStrategy(),
     ]
 
     pipeline = EvaluationPipeline()
@@ -43,7 +49,7 @@ def main():
 
     # Format Console Comparison Report
     print("\n" + "=" * 90)
-    print("                     REVIVE REVENUE RECOVERY BASELINE BENCHMARK                     ")
+    print("                     REVIVE REVENUE RECOVERY BENCHMARK REPORT                     ")
     print("=" * 90)
     header = f"{'Strategy':<16} | {'Recovered (INR)':<16} | {'Incremental':<14} | {'Interventions':<14} | {'Precision':<10} | {'Capture Rate'}"
     print(header)
