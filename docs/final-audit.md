@@ -57,7 +57,7 @@ tests/test_end_to_end_demo.py           :  8 /  8 PASSED
 tests/test_reliability_observability.py : 10 / 10 PASSED
 tests/test_adversarial_hardening.py     : 20 / 20 PASSED
 ----------------------------------------------------------------------------------------
-TOTAL                                   : 177 / 177 PASSED (100% Green)
+TOTAL                                   : 177 / 177 PASSED (100% Green in ~9.5s)
 ```
 
 ---
@@ -72,9 +72,9 @@ Official evaluation artifacts located in `experiments/benchmark_5seeds_10k/`:
 
 ### Measured Synthetic Metrics Across 50,000 Holdout Transactions:
 - **`NO_ACTION` Baseline**: Mean recovered INR 71,342.40 (0.94% recovery rate; natural recovery only).
-- **`NAIVE_RETRY` Baseline**: Mean recovered INR 809,172.38 (10.86% recovery rate; 30.82% precision; 69.18% friction on permanent declines).
-- **`RULE_BASED` Baseline**: Mean recovered INR 3,626,512.01 (48.58% recovery rate; 69.46% precision; unconstrained by fraud gates).
-- **`REVIVE (Our Agent)`**: Mean recovered **INR 2,726,857.62** (Incremental ΔR: **INR 2,655,515.22**; 36.53% recovery rate; **55.99% intervention precision**; **30.4% human review escalation**; **0 high-risk fraud leaks**).
+- **`NAIVE_RETRY` Baseline**: Mean recovered INR 809,172.38 (10.86% recovery rate; 30.84% precision; 69.16% friction on permanent declines).
+- **`RULE_BASED` Baseline**: Mean recovered INR 3,626,512.01 (48.58% recovery rate; 69.46% precision; unconstrained by fraud gates or attempt caps).
+- **`REVIVE (Governed Agent)`**: Mean recovered **INR 2,726,857.62** (Incremental ΔR: **INR 2,655,515.22**; 36.53% recovery rate; **56.04% intervention precision**; **22.4% fewer interventions than RULE_BASED**; **624 low-confidence escalations [5.64% of failed opportunities]**; **0 high-risk fraud leaks**).
 
 ---
 
@@ -91,4 +91,4 @@ Official evaluation artifacts located in `experiments/benchmark_5seeds_10k/`:
 
 1. **Synthetic Environment**: Metrics reflect synthetic customer personas and failure models, not live production Razorpay traffic.
 2. **Simulated Actions**: Payment retries, reminders, and payment links are recorded in an in-memory execution cache; no live WhatsApp, email, or bank rails are triggered.
-3. **Pre-Production Handoff**: For live production deployment, real gateway webhook ingress, live Kafka queuing, merchant authentication, and formal A/B testing on merchant traffic would be required.
+3. **Pre-Production Handoff**: For live production deployment, real gateway webhook ingress, live message queuing, merchant authentication, and formal A/B testing on merchant traffic would be required.

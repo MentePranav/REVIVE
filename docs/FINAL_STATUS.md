@@ -20,11 +20,13 @@
 
 ## 2. Actual System Verification Metrics
 
-- **Automated Test Suite**: **177 / 177 Passed** (100% Green in ~9.8s)
+- **Automated Test Suite**: **177 / 177 Passed** (100% Green in ~9.5s)
 - **Holdout Evaluation Dataset**: **50,000 Synthetic Transactions** (5 Holdout Seeds: 101, 202, 303, 404, 505)
 - **Incremental Revenue Yield (ΔR)**: **INR 2,655,515.22** (95% Bootstrap CI: `[INR 2,525,483.92, INR 2,787,014.28]`)
-- **Intervention Precision**: **55.99%** (vs. 30.82% for naive retries)
-- **High-Risk Fraud Leaks**: **0** (Zero tolerance enforced by Rule $P005$)
+- **Intervention Precision**: **56.04%** (vs. 30.84% for naive retries)
+- **Intervention Efficiency**: **22.37% fewer interventions than unconstrained RULE_BASED**
+- **Low-Confidence Escalations ($P004$)**: **624 cases (5.64% of failed opportunities)** routed to Human Review
+- **High-Risk Fraud Leaks**: **0** (Zero automated actions permitted on high-risk accounts by Rule $P005$)
 - **Reproducibility Fingerprint**: **SHA-256 (`35b2e65d2efaa521`)**
 - **Accounting Verification**: **100% Balanced** ($\text{RevenueAtRisk} = \text{Recovered} + \text{Unrecovered}$)
 - **Interactive Control Center**: Running locally on **[http://localhost:8000](http://localhost:8000)**
@@ -36,7 +38,7 @@
 1. **Core Engines**:
    - `simulator/` — Controlled synthetic transaction & lifecycle generator.
    - `baselines/` — Deterministic `NO_ACTION`, `NAIVE_RETRY`, `RULE_BASED` baseline implementations.
-   - `agent/` — 30+ feature extractor, multi-class diagnostic classifier, and net Expected Value ($EV$) action optimizer.
+   - `agent/` — 30+ feature extractor, multi-class diagnostic classifier, and net Expected Value ($EV$) action optimizer (deterministic and interpretable; avoiding external LLM API latencies).
    - `policy/` — Zero-trust safety engine enforcing rules $P001$–$P010$ with cryptographic token generation.
    - `execution/` — Controlled execution simulator with SHA-256 idempotency locks and state re-validation.
    - `evaluation/` — Multi-seed statistical holdout evaluator with Brier score calibration and bootstrap analysis.

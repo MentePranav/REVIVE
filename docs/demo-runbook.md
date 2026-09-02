@@ -30,7 +30,7 @@ Open the Web UI: **[http://localhost:8000](http://localhost:8000)**
 2. **Observe**: The application reloads into the deterministic default Golden State (**Seed 42, 100 Transactions**).
 3. **Check Top KPIs**:
    - **Revenue At Risk**: Displays total synthetic failed volume.
-   - **Incremental Revenue (ΔR)**: Shows net revenue recovered above baseline.
+   - **Incremental Revenue (ΔR)**: Shows net revenue recovered above passive baseline.
    - **Safety Blocks**: Displays interventions prevented by the Zero-Trust Policy Engine.
 
 ---
@@ -79,8 +79,12 @@ Switch to the **Recovery Cases** tab in the navigation bar.
 
 ### Step 3: Benchmarks & Multi-Seed Holdout Verification
 1. Click the **Benchmark** tab in the navigation bar.
-2. **Observe**: The 4-way comparative table across 50,000 holdout transactions (Seeds 101–505).
-3. Confirm that REVIVE captures **INR 2,655,515.22 in incremental revenue** while maintaining zero high-risk fraud leaks.
+2. **Observe**: The 4-way comparative table across 50,000 holdout transactions (Seeds 101–505):
+   - `NO_ACTION`: INR 71,342.40 (0.94% organic recovery).
+   - `NAIVE_RETRY`: INR 809,172.38 (30.84% precision; 69.16% failure friction).
+   - `RULE_BASED`: INR 3,626,512.01 (Unconstrained gross recovery).
+   - `REVIVE`: INR 2,726,857.62 (Incremental ΔR: **INR 2,655,515.22**; **56.04% precision**).
+3. **Review Tradeoff Note**: Understand that `RULE_BASED` achieves higher raw gross recovery because it lacks policy gates, while REVIVE reduces interventions by 22.4% and enforces zero high-risk automated leaks.
 
 ---
 

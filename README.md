@@ -1,6 +1,6 @@
 ﻿# REVIVE
 
-### Autonomous Revenue Recovery Agent
+### Autonomous Revenue Recovery Decision System
 **Razorpay AI Buildathon 2026 — Track 3: AI Revenue Recovery**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
@@ -18,7 +18,7 @@ Payment failures and checkout drop-offs are a leading cause of merchant revenue 
 
 - **Blind Retries**: Blindly retrying every failed transaction damages cardholder trust, triggers issuer bank rate limits, and wastes operational budget on permanent bank declines.
 - **Communication Spam**: Repeated, uncoordinated customer SMS/WhatsApp reminders cause customer fatigue and brand damage.
-- **Fraud Exposure**: Indiscriminately attempting to re-bill high-risk or compromised accounts causes chargeback penalties and fraud losses.
+- **Risk Exposure**: Indiscriminately attempting to re-bill high-risk or compromised accounts causes chargeback penalties and fraud losses.
 - **Lack of Governance**: Traditional scripts lack stopping rules, double-recovery guards, and full decision auditability.
 
 ---
@@ -27,19 +27,21 @@ Payment failures and checkout drop-offs are a leading cause of merchant revenue 
 
 > **"REVIVE does not blindly retry failed payments. It diagnoses the failure, estimates recoverability, selects the safest economically useful intervention, enforces policy, executes only authorized actions, and records the complete decision trail."**
 
-REVIVE transforms revenue recovery from an unconstrained script into a **governed, context-aware decision intelligence system**.
+REVIVE transforms revenue recovery from an unconstrained script into an **interpretable, policy-governed decision intelligence workflow**.
 
 ---
 
-## 3. Why REVIVE Is Different
+## 3. Why REVIVE Is Different: Governed Recovery vs. Unconstrained Maximization
 
-| Feature | Naive Retries / Heuristics | REVIVE Autonomous Agent |
+Most recovery scripts focus solely on unconstrained gross revenue recovery, ignoring operational friction, fraud exposure, and customer harassment. REVIVE explicitly introduces **governed recovery**:
+
+| Feature | Naive Retries / Heuristics | REVIVE Governed Decision System |
 | :--- | :--- | :--- |
 | **Decision Logic** | Static rules or blind retry | Contextual root-cause diagnosis + Calibrated recoverability scoring |
 | **Action Selection** | Always retry or blast reminder | Net Expected Value ($EV = P \cdot Amount - Cost - Friction$) optimization |
 | **Safety Governance** | None; unconstrained execution | Zero-trust policy gate ($P001$–$P010$) with cryptographic authorization tokens |
 | **Stopping Rules** | Retries until gateway hard error | Hard 2-attempt cap ($P003$) and customer contact limit ($P007$) |
-| **Fraud & Risk** | Ignored; acts on all failures | Zero tolerance: High-risk accounts routed strictly to Human Review ($P005$) |
+| **Fraud & Risk** | Ignored; acts on all failures | Zero automated intervention on high-risk accounts ($P005$ routes to Human Review) |
 | **Double Recovery** | Risks duplicate charges | State-aware: Verifies payment isn't already resolved before execution ($P002$) |
 | **Idempotency** | Vulnerable to race conditions | Deterministic SHA-256 idempotency cache prevents duplicate actions |
 | **Auditability** | Ephemeral or missing logs | Immutable chronological audit trail with correlation IDs ($X-Correlation-ID$) |
@@ -52,7 +54,7 @@ REVIVE transforms revenue recovery from an unconstrained script into a **governe
 
 The system operates across a clean 5-stage lifecycle:
 1. **Observable Data Ingestion**: Extracts failed transactions, checkouts, and customer histories (with zero leakage of ground-truth counterfactuals).
-2. **Contextual Intelligence**: Diagnoses failure root causes, scores recovery probability ($P_{rec}$), and calculates net Expected Value across `RETRY`, `REMINDER`, `PAYMENT_LINK`, and `DO_NOTHING`.
+2. **Contextual Intelligence**: Diagnoses failure root causes, scores recovery probability ($P_{rec}$), and calculates net Expected Value across `RETRY`, `REMINDER`, `PAYMENT_LINK`, and `DO_NOTHING` using deterministic, interpretable scoring logic (avoiding high-latency external LLM API dependencies).
 3. **Zero-Trust Policy Gate**: Evaluates recommendations against 7 strict safety rules ($P001$–$P008$). Only passes issue an immutable `ExecutionAuthorization` token ($P010$).
 4. **Controlled Execution Simulator**: Re-validates live payment state, locks idempotency keys, and records simulated recovery outcomes.
 5. **Observability & Benchmarking**: Emits structured JSON logs and feeds live metrics into the Interactive Control Center.
@@ -103,30 +105,34 @@ REVIVE enforces an uncompromised fail-closed safety hierarchy:
 - **$P001$ Input Schema Integrity**: Validates currency, positive amounts ($> 0$), and required metadata.
 - **$P002$ Payment State Verification**: Prohibits recovery attempts on already captured or settled transactions.
 - **$P003$ Hard Attempt Cap**: Strictly caps automated recovery at **2 attempts per payment ID**.
-- **$P004$ Diagnostic Confidence Gate**: Actions with model confidence $< 85\%$ are escalated to **Human Review**.
-- **$P005$ High-Risk Fraud Gate**: Accounts flagged with risk or chargeback signals route strictly to Fraud Review (**0 automated leaks tolerated**).
+- **$P004$ Diagnostic Confidence Gate**: Actions with model confidence $< 85\%$ are escalated to **Human Review** (624 cases / 5.64% of opportunities in benchmark).
+- **$P005$ High-Risk Fraud Gate**: Accounts flagged with risk or chargeback signals route strictly to Risk Review (**0 automated interventions permitted**).
 - **$P007$ Contact Fatigue Limits**: Restricts customer reminders/links to a maximum of **2 communications**.
-- **$P008$ Cooldown Interval**: Enforces a mandatory **300-second pause** between repeated interventions.
+- **$P008$ Cooldown Interval**: Enforces a mandatory **300-second pause** between successive recovery attempts on the same transaction.
 - **$P010$ Cryptographic Token Issuance**: Only authorized requests receive an `ExecutionAuthorization` token.
 
 ---
 
 ## 7. Statistical Benchmark Results (50,000 Holdout Transactions)
 
-> **Notice:** *All metrics reflect a statistically controlled synthetic evaluation benchmark across 5 holdout seeds (Seeds 101, 202, 303, 404, 505) totaling 50,000 transactions and 11,466 failed opportunities. This demonstrates algorithm validity, not live production Razorpay figures.*
+> **Notice:** *All metrics reflect a statistically controlled synthetic evaluation benchmark across 5 holdout seeds (Seeds 101, 202, 303, 404, 505) totaling 50,000 transactions and 11,064 failed opportunities. This demonstrates algorithm validity and safety boundaries, not live production Razorpay figures.*
 
 | Strategy | Mean Recovered Revenue (INR) | Mean Incremental Revenue (ΔR) | Recovery Rate | Intervention Precision | Safety Profile & Key Tradeoffs |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`NO_ACTION`** | INR 71,342.40 | INR 0.00 | 0.94% | N/A | Passive observation; captures organic recoveries only. |
-| **`NAIVE_RETRY`** | INR 809,172.38 | INR 737,829.97 | 10.86% | 30.82% | Blindly retries; causes 69.18% failure friction on permanent declines. |
-| **`RULE_BASED`** | INR 3,626,512.01 | INR 3,555,169.60 | 48.58% | 69.46% | Unconstrained heuristics; lacks zero-trust governance & fraud risk gates. |
-| **`REVIVE (Ours)`** | **INR 2,726,857.62** | **INR 2,655,515.22** | **36.53%** | **55.99%** | **Contextual optimization + 30.4% Human Review escalation + 2-attempt cap.** |
+| **`NO_ACTION`** | INR 71,342.40 | INR 0.00 | 0.94% | N/A | Passive baseline; captures organic recoveries only. |
+| **`NAIVE_RETRY`** | INR 809,172.38 | INR 737,829.97 | 10.86% | 30.84% | Blindly retries; causes 69.16% failure friction on permanent declines. |
+| **`RULE_BASED`** | INR 3,626,512.01 | INR 3,555,169.60 | 48.58% | 69.46% | Unconstrained gross recovery; lacks zero-trust governance & fraud risk gates. |
+| **`REVIVE (Governed)`** | **INR 2,726,857.62** | **INR 2,655,515.22** | **36.53%** | **56.04%** | **Governed recovery: 22.4% fewer interventions than RULE_BASED + 2-attempt cap + 0 fraud leaks.** |
 
-### Key Benchmark Takeaways:
-- **Incremental Revenue Yield (ΔR)**: **INR 2,655,515.22** (95% Bootstrap CI: `[INR 2,525,483.92, INR 2,787,014.28]`).
-- **Intervention Precision**: **55.99%** (vs. 30.82% for naive retries).
-- **High-Risk Fraud Leaks**: **0** across all 50,000 transactions.
-- **Accounting Consistency**: Verified 100% ($\text{RevenueAtRisk} = \text{Recovered} + \text{Unrecovered}$).
+### What the Benchmark Taught Us (Constrained vs. Unconstrained Recovery)
+
+In this synthetic simulator, the unconstrained `RULE_BASED` strategy achieved higher gross recovery by aggressively acting across all opportunities without stopping rules or risk boundaries.
+
+**REVIVE deliberately chose not to optimize for unconstrained gross revenue.** Instead:
+- REVIVE recovered **INR 2,726,857.62 (75.19% of RULE_BASED gross revenue)**.
+- REVIVE achieved this with **378 fewer interventions per 10k transactions (a 22.37% reduction in interventions)**.
+- REVIVE delivered **INR 2,655,515.22 in incremental revenue (ΔR)** over passive baseline with **56.04% precision** (vs. 30.84% for naive retry).
+- REVIVE escalated **624 ambiguous cases (5.64% of failed opportunities)** to human review and allowed **0 automated interventions on high-risk accounts**.
 
 ---
 
@@ -171,11 +177,16 @@ REVIVE/
 │   ├── architecture.md
 │   ├── demo-checklist.md
 │   ├── demo-runbook.md
+│   ├── evaluator-guide.md
 │   ├── evidence-map.md
 │   ├── failure-analysis.md
+│   ├── final-audit.md
+│   ├── final-benchmark-audit.md
 │   ├── pitch-script.md
+│   ├── red-team-claim-audit.md
 │   ├── reliability.md
-│   └── safety-and-governance.md
+│   ├── safety-and-governance.md
+│   └── submission-checklist.md
 ├── evaluation/             # Phase 7: Multi-Seed Holdout Experiment Engine
 ├── execution/              # Phase 6: Controlled Recovery Execution Simulator
 ├── experiments/            # Phase 7: 50,000 Transaction Benchmark Reports

@@ -43,7 +43,7 @@ Before any action is authorized, it must pass an unbroken chain of deterministic
 
 ### $P002$ — Anti-Double-Recovery & Payment State Check
 - Verifies the live payment status before execution.
-- If a payment is already `CAPTURED`, `SUCCESS`, or marked `is_already_resolved = True`, execution is strictly blocked (`DENY`). This prevents double-charging cardholders who settled out-of-band.
+- If a payment is already `CAPTURED`, `SUCCESS`, or marked `is_already_resolved = True`, execution is strictly blocked (`DENY`). This prevents attempts on transactions settled out-of-band.
 
 ### $P003$ — Automated Stopping Rules (2-Attempt Hard Cap)
 - Prohibits infinite retry loops on failing payments.
@@ -51,11 +51,11 @@ Before any action is authorized, it must pass an unbroken chain of deterministic
 
 ### $P004$ — Diagnostic Confidence Gate
 - Evaluates the model's diagnostic certainty.
-- If root-cause confidence is below **85% ($< 0.85$)**, the system halts automation and routes the event to the **Human Review Queue**.
+- If root-cause confidence is below **85% ($< 0.85$)**, the system halts automation and routes the event to the **Human Review Queue** (624 cases / 5.64% of failed opportunities in benchmark).
 
-### $P005$ — High-Risk Fraud & Chargeback Gate
-- Enforces zero tolerance for automated interventions on accounts flagged with fraud, suspicious IP velocity, or high chargeback history.
-- Flagged cases are blocked from automated retries and escalated immediately to the risk team.
+### $P005$ — High-Risk Fraud & Risk Gate
+- Enforces zero automated interventions on accounts flagged with fraud, suspicious IP velocity, or high chargeback history.
+- Flagged cases are blocked from automated retries and escalated immediately to the risk review team.
 
 ### $P007$ — Customer Contact Fatigue Limits
 - Protects customers from notification spam.
@@ -69,7 +69,7 @@ Before any action is authorized, it must pass an unbroken chain of deterministic
 
 ---
 
-## 3. Idempotency & Concurrency Safety
+## 3. Idempotency & Concurrency Safeguards
 
 To prevent duplicate execution caused by network retries, browser double-clicks, or race conditions:
 1. The executor computes a deterministic SHA-256 idempotency key:
@@ -79,7 +79,7 @@ To prevent duplicate execution caused by network retries, browser double-clicks,
 
 ---
 
-## 4. Fail-Closed Behavioral Guarantees
+## 4. Fail-Closed Behavioral Safeguards
 
 Under every anomalous or edge condition, REVIVE defaults to **Fail-Closed**:
 - **Malformed Input**: Blocked ($P001$).

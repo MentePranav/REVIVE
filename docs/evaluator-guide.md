@@ -1,6 +1,6 @@
 ﻿# REVIVE — Buildathon Evaluator Quick-Start Guide
 
-Welcome to the **REVIVE (Autonomous Revenue Recovery Agent)** repository. This concise guide directs evaluators to the most important technical evidence and demonstrations in the repository.
+Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** repository. This concise guide directs evaluators to the most important technical evidence and demonstrations in the repository.
 
 ---
 
@@ -40,9 +40,9 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Agent)** repository. This c
   **[experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md](file:///C:/Users/Home/Projects/REVIVE/experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md)**
 - Review the 4-way comparative evaluation across **50,000 synthetic holdout transactions**:
   - `NO_ACTION`: INR 71,342.40 (0.94% organic recovery)
-  - `NAIVE_RETRY`: INR 809,172.38 (30.82% precision; 69.18% friction)
-  - `RULE_BASED`: INR 3,626,512.01 (Unconstrained; lacks fraud gates)
-  - **`REVIVE`**: **INR 2,726,857.62 (Incremental ΔR: INR 2,655,515.22; 55.99% precision; 0 fraud leaks)**
+  - `NAIVE_RETRY`: INR 809,172.38 (30.84% precision; 69.16% friction)
+  - `RULE_BASED`: INR 3,626,512.01 (Unconstrained gross recovery)
+  - **`REVIVE`**: **INR 2,726,857.62 (Incremental ΔR: INR 2,655,515.22; 56.04% precision; 22.4% fewer interventions; 0 fraud leaks)**
 
 ---
 
@@ -59,4 +59,4 @@ Execute all 177 unit, integration, property, and adversarial tests:
 .\.venv\Scripts\python.exe -m pytest tests/ -v
 ```
 - **Coverage**: 11 simulator tests, 17 baseline tests, 26 intelligence agent tests, 22 policy engine tests, 35 execution tests, 26 holdout experiment tests, 12 server API tests, 8 end-to-end tests, 10 observability tests, and 20 adversarial edge case tests.
-- **Expected Result**: `177 passed in ~9.8s`.
+- **Expected Result**: `177 passed in ~9.5s`.

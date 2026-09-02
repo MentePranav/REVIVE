@@ -27,14 +27,14 @@ This document provides the exact step-by-step procedure for demonstrating REVIVE
 - **Point to Top KPIs**:
   - **Revenue At Risk**: Show total synthetic volume lost to payment friction.
   - **Incremental Revenue (ΔR)**: Highlight INR 2.65M+ recovered revenue above passive baseline.
-  - **Intervention Precision**: Show 56.0% precision vs. 30.8% blind naive retry.
+  - **Intervention Precision**: Show 56.04% precision vs. 30.84% blind naive retry.
   - **Safety Blocks**: Point out that dangerous/unauthorized interventions are actively stopped.
 - **Narrative**: *"Merchants lose substantial revenue when transactions fail. Blind retries spam customers and trigger bank penalties. REVIVE uses contextual diagnosis and zero-trust governance to intervene only when safe and profitable."*
 
-### Step 2: The 3 Golden Scenarios (0:45 - 2:00)
+### Step 2: The 3 Core Scenarios (0:45 - 2:00)
 Switch to the **Recovery Cases** tab:
 
-1. **Golden Scenario 1: Intelligent Transient Recovery (UPI Timeout)**
+1. **Scenario 1: Intelligent Transient Recovery (UPI Timeout)**
    - Search for a transient failure case.
    - Click **Inspect**.
    - Show:
@@ -42,24 +42,24 @@ Switch to the **Recovery Cases** tab:
      - **Phase 5 Safety Gate**: All 7 safety rules passed (`P010_ACTION_APPROVED`), `ExecutionAuthorization` token issued.
      - **Controlled Execution**: Click **Execute Simulated Recovery**. Notice instant status update to `RECOVERED` and external reference recorded.
 
-2. **Golden Scenario 2: Zero-Tolerance High-Risk Block (Fraud Prevention)**
+2. **Scenario 2: Zero-Tolerance High-Risk Block (Fraud & Dispute Prevention)**
    - Filter cases by status: `Human Review` or search for `HIGH_RISK`.
    - Click **Inspect**.
    - Show:
-     - **Risk Signal**: `HIGH` fraud risk.
+     - **Risk Signal**: `HIGH` risk flag.
      - **Policy Rule**: Triggered `P005_HIGH_RISK_GATE`.
-     - **Safety Invariant**: Automated execution button is completely disabled. System routes to fraud risk team instead of risking a chargeback.
+     - **Safety Invariant**: Automated execution button is completely disabled. System routes to risk review instead of risking chargeback penalties.
 
-3. **Golden Scenario 3: Hard Attempt Cap & Fatigue Guard (P003 / P007)**
+3. **Scenario 3: Hard Attempt Cap & Fatigue Guard (P003 / P007)**
    - Show how cases with prior attempts or contact exhaustion are blocked from receiving duplicate spam reminders.
 
-### Step 3: Comparative Benchmark & Scientific Proof (2:00 - 2:45)
+### Step 3: Comparative Benchmark & Tradeoff Walkthrough (2:00 - 2:45)
 - Switch to the **Benchmark** tab.
 - Explain the 4-way strategy comparison across 50,000 transactions (Seeds 101–505):
-  - `NO_ACTION`: 0.9% passive recovery.
-  - `NAIVE_RETRY`: 10.9% recovery but creates 69.2% customer friction on permanent declines.
-  - `RULE_BASED`: 48.6% recovery but lacks safety/fraud controls.
-  - `REVIVE`: 36.5% automated recovery + 30.4% human review escalations, strictly respecting 2-attempt limits.
+  - `NO_ACTION`: 0.94% passive recovery.
+  - `NAIVE_RETRY`: 10.86% recovery but creates 69.16% customer friction on permanent declines.
+  - `RULE_BASED`: 48.58% recovery; unconstrained by fraud gates or attempt caps.
+  - `REVIVE`: 36.53% recovery, delivering **INR 2,655,515.22 in incremental revenue** while **reducing interventions by 22.4%**, escalating 624 low-confidence cases to human review, and permitting zero automated high-risk actions.
 
 ### Step 4: Live Reset & Wrap-up (2:45 - 3:00)
 - Click **Reset Demo** in the top navigation bar to demonstrate deterministic state restoration.
@@ -69,6 +69,8 @@ Switch to the **Recovery Cases** tab:
 
 ## 3. Evaluator FAQ Quick Reference
 
+- **Q: Why does the unconstrained RULE_BASED baseline have higher gross revenue?**
+  *A: In this simulator, the rule-based strategy aggressively acts on every failure without stopping rules or risk boundaries. REVIVE was intentionally designed for governed recovery: trading some gross revenue to reduce interventions by 22.4%, cap automated attempts at 2, respect customer fatigue, and allow zero automated high-risk fraud actions.*
 - **Q: Are real payment networks or cards being charged?**
   *A: No. REVIVE operates in a statistically controlled, deterministic local simulation environment to protect payment credentials while enabling rigorous scientific benchmarking.*
 - **Q: How is ground truth isolated from the AI model?**

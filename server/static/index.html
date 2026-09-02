@@ -158,7 +158,7 @@
               </div>
               <div class="safety-stat">
                 <span class="safety-num" id="stat-p005">0</span>
-                <span class="safety-desc">High-Risk Fraud Leaks (P005: 0 tolerated)</span>
+                <span class="safety-desc">High-Risk Fraud Automated Blocks (P005)</span>
               </div>
               <div class="safety-stat">
                 <span class="safety-num" id="stat-p007">0</span>
@@ -170,7 +170,7 @@
               </div>
             </div>
             <div class="panel-footer-note">
-              🛡️ <strong>Zero-Trust Security Invariant:</strong> Optimization may recommend. Policy may authorize. Execution may act.
+              🛡️ <strong>Zero-Trust Security Invariant:</strong> Intelligence may recommend. Policy may authorize. Execution may act.
             </div>
           </div>
         </div>
@@ -266,7 +266,7 @@
               <div class="rule-code">P003</div>
               <div class="rule-info">
                 <h4>Automated Attempt Cap Safety (Hard Limit: 2 attempts)</h4>
-                <p>Strictly prohibits a 3rd automated recovery attempt on any payment ID to prevent infinite loops.</p>
+                <p>Strictly prohibits a 3rd automated recovery attempt on any payment ID to prevent infinite retry loops.</p>
               </div>
               <div class="rule-type">ATTEMPT CAP</div>
             </div>
@@ -281,8 +281,8 @@
             <div class="rule-card">
               <div class="rule-code">P005</div>
               <div class="rule-info">
-                <h4>High-Risk Fraud & Chargeback Gate</h4>
-                <p>Zero tolerance for automated actions on flagged accounts. Routes to Fraud Risk Review immediately.</p>
+                <h4>High-Risk Fraud & Risk Gate</h4>
+                <p>Blocks automated interventions on flagged high-risk accounts and routes to manual Risk Review.</p>
               </div>
               <div class="rule-type">RISK GATE</div>
             </div>
@@ -328,9 +328,9 @@
                   <th>Strategy</th>
                   <th>Mean Recovered Revenue (INR)</th>
                   <th>Mean Incremental Revenue (INR)</th>
-                  <th>Overall Recovery Rate</th>
+                  <th>Interventions Attempted</th>
                   <th>Intervention Precision</th>
-                  <th>Key Tradeoff / Behavior</th>
+                  <th>Key Tradeoff / Behavioral Profile</th>
                 </tr>
               </thead>
               <tbody>
@@ -338,40 +338,40 @@
                   <td><strong>NO_ACTION</strong></td>
                   <td>INR 71,342.40</td>
                   <td>INR 0.00</td>
-                  <td>0.9%</td>
+                  <td>0.0</td>
                   <td>N/A</td>
-                  <td>Passive observation; captures only natural baseline recoveries.</td>
+                  <td>Passive observation; captures organic recoveries only.</td>
                 </tr>
                 <tr>
                   <td><strong>NAIVE_RETRY</strong></td>
                   <td>INR 809,172.38</td>
                   <td>INR 737,829.97</td>
-                  <td>10.9%</td>
-                  <td>30.8%</td>
-                  <td>Retries everything blindly; generates 69.2% failure friction on declines.</td>
+                  <td>1,342.4</td>
+                  <td>30.84%</td>
+                  <td>Retries everything blindly; generates 69.16% failure friction on hard declines.</td>
                 </tr>
                 <tr>
                   <td><strong>RULE_BASED</strong></td>
                   <td>INR 3,626,512.01</td>
                   <td>INR 3,555,169.60</td>
-                  <td>48.6%</td>
-                  <td>69.5%</td>
-                  <td>Unconstrained heuristics; lacks zero-trust governance & risk gates.</td>
+                  <td>1,690.0</td>
+                  <td>69.46%</td>
+                  <td>Unconstrained gross recovery; lacks zero-trust governance, attempt caps, and fraud gates.</td>
                 </tr>
                 <tr class="highlight-row">
-                  <td><strong>REVIVE (Ours)</strong></td>
+                  <td><strong>REVIVE (Constrained)</strong></td>
                   <td><strong>INR 2,726,857.62</strong></td>
                   <td><strong>INR 2,655,515.22</strong></td>
-                  <td><strong>36.5%</strong></td>
-                  <td><strong>56.0%</strong></td>
-                  <td><strong>Contextual optimization + 30.4% Human Review escalation + 2-attempt cap.</strong></td>
+                  <td><strong>1,312.0</strong></td>
+                  <td><strong>56.04%</strong></td>
+                  <td><strong>Governed recovery: 22.4% fewer interventions than RULE_BASED + 2-attempt cap + 0 high-risk leaks.</strong></td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div class="benchmark-footer-card">
-            <h4>💡 Core Product Takeaway:</h4>
-            <p>REVIVE captures <strong>INR 2,655,515.22</strong> in incremental revenue with <strong>56.0% intervention precision</strong> while actively protecting merchants from fraud leaks ($P005$), respecting customer fatigue limits ($P007$), and enforcing 2-attempt stopping rules ($P003$).</p>
+            <h4>💡 Core Architectural Insight (Governed vs. Unconstrained Recovery):</h4>
+            <p>In this synthetic benchmark, the unconstrained <code>RULE_BASED</code> strategy achieved the highest raw gross recovery by aggressively intervening across all failure states. <strong>REVIVE deliberately trades some unconstrained gross recovery (recovering 75.2% of RULE_BASED gross revenue) in order to reduce interventions by 22.4%</strong>, enforce hard 2-attempt limits ($P003$), respect customer fatigue limits ($P007$), escalate low-confidence cases ($P004$), and block automated actions on high-risk accounts ($P005$).</p>
           </div>
         </div>
       </section>
@@ -409,7 +409,7 @@
         <div class="panel">
           <div class="panel-header">
             <h3>Phase 7 Statistical Holdout Evaluation Summary</h3>
-            <span class="panel-sub">Unseen holdout calibration, Brier score, and bootstrap confidence intervals</span>
+            <span class="panel-sub">Unseen holdout calibration, Brier score, and bootstrap confidence intervals (50k txns)</span>
           </div>
           <div class="eval-metrics-grid">
             <div class="eval-card">
@@ -418,9 +418,9 @@
               <div class="eval-sub">95% Bootstrap CI: [INR 2,525,483.92, INR 2,787,014.28]</div>
             </div>
             <div class="eval-card">
-              <div class="eval-label">Brier Score</div>
+              <div class="eval-label">Brier Probability Score</div>
               <div class="eval-val">0.2549</div>
-              <div class="eval-sub">Mean squared probability error</div>
+              <div class="eval-sub">Mean squared probability error across holdout dataset</div>
             </div>
             <div class="eval-card">
               <div class="eval-label">Expected Calibration Error</div>
