@@ -46,18 +46,10 @@ REVIVE is an autonomous revenue recovery decision, governance, and execution sys
                             │
                             ▼
 ┌────────────────────────────────────────────────────────┐
-│          PHASE 2 SYNTHETIC OUTCOME SIMULATION          │
-│  • Post-execution counterfactual outcome resolution    │
-│  • Zero ground-truth leakage into decision path        │
-└───────────────────────────┬────────────────────────────┘
-                            │
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│        PHASE 7: EXPERIMENTAL HOLDOUT EVALUATION        │
-│  • Unseen Holdout Evaluation (Seeds 101–505)           │
-│  • 95% Bootstrap Confidence Intervals (1,000 samples)  │
-│  • Calibration Analysis (Brier Score / ECE)            │
-│  • Strict Accounting Reconciliation Invariants         │
+│        PHASE 8: INTERACTIVE CONTROL CENTER (SPA)       │
+│  • High-density fintech dashboard & KPI cards          │
+│  • Filterable transaction queue & drilldown modal      │
+│  • Visual Safety Checklist & Audit Log Explorer        │
 └────────────────────────────────────────────────────────┘
 ```
 
@@ -75,53 +67,28 @@ Evaluated across 5 independent holdout datasets (10,000 transactions each):
 | **`REVIVE` (Ours)** | **INR 2,726,857.62** | **INR 2,655,515.22** | **36.5%** | **56.0%** |
 
 * **95% Bootstrap Confidence Interval for REVIVE Incremental Revenue**: **[INR 2,525,483.92, INR 2,787,014.28]**
-* **Recoverability Brier Score**: **0.2549**
-* **Expected Calibration Error (ECE)**: **25.37%**
-* **Accounting Balance Sheet Reconciliation**: **100% Verified**
+* **Recoverability Brier Score**: **0.2549** | **Expected Calibration Error (ECE)**: **25.37%**
+* **Accounting Invariant Reconciliation**: **100% Balanced**
 
 > [!NOTE]
 > All results represent controlled synthetic benchmarks for the Razorpay AI Buildathon 2026 prototype evaluation.
 
 ---
 
-## 3. Project Structure
+## 3. Quickstart & CLI Commands
 
-```text
-REVIVE/
-├── agent/                  # Phase 4: Feature extraction, diagnosis & scoring
-├── config/                 # Simulator & environment configuration
-├── data/                   # Synthetic benchmark datasets
-├── docs/                   # Architectural & technical documentation
-│   ├── architecture.md
-│   ├── baselines.md
-│   ├── simulator.md
-│   ├── revive-engine.md
-│   ├── policy-engine.md
-│   ├── execution-engine.md
-│   └── evaluation.md
-├── evaluation/             # Phase 3 & 7: Benchmarks, strategies & holdout runner
-│   └── experiment/         # Multi-seed holdout engine, bootstrap, calibration
-├── execution/              # Phase 6: Controlled executor, orchestrator & traces
-├── policy/                 # Phase 5: Policy engine, safety gates & authorizations
-├── simulator/              # Phase 2: Synthetic payment lifecycle generator
-└── tests/                  # Automated pytest test suites (134/134 passing)
+### 3.1. Launch the Interactive Control Center (Phase 8)
+```powershell
+python -m server.cli --port 8000 --host 127.0.0.1
 ```
+Open **`http://localhost:8000`** in your browser.
 
----
-
-## 4. Quickstart & CLI Commands
-
-### 4.1. Run Full Regression Test Suite
+### 3.2. Run Full Regression Test Suite (147/147 Passing)
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests/ -v
 ```
 
-### 4.2. Run Multi-Seed Holdout Evaluation Benchmark (5 Seeds, 50k Txns)
+### 3.3. Run Multi-Seed Holdout Benchmark
 ```powershell
 python -m evaluation.experiment.cli --output experiments/benchmark_5seeds_10k --seeds 101,202,303,404,505 --size 10000 --bootstrap 1000
-```
-
-### 4.3. Inspect End-to-End Lifecycle Trace for a Specific Event
-```powershell
-python -m execution.cli --dataset data/ --trace-event txn_00002929
 ```

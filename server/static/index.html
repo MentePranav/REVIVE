@@ -1,0 +1,524 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REVIVE — Autonomous Revenue Recovery Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Top Navigation Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-badge">REVIVE</span>
+          <span class="logo-sub">Autonomous Revenue Recovery</span>
+        </div>
+        <div class="env-tag">
+          <span class="pulse-dot"></span>
+          SYNTHETIC EVALUATION ENVIRONMENT
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="sim-controls">
+          <label for="sim-size">Batch Size:</label>
+          <select id="sim-size" class="select-input">
+            <option value="100" selected>100 txns</option>
+            <option value="1000">1,000 txns</option>
+            <option value="10000">10,000 txns</option>
+          </select>
+          <label for="sim-seed">Seed:</label>
+          <input type="number" id="sim-seed" value="42" class="num-input">
+          <button id="btn-run-sim" class="btn btn-primary">
+            <span class="btn-icon">⚡</span> Run Recovery Simulation
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-links">
+        <button class="nav-tab active" data-tab="overview">Overview</button>
+        <button class="nav-tab" data-tab="cases">Recovery Cases <span id="cases-count-badge" class="badge">0</span></button>
+        <button class="nav-tab" data-tab="safety">Safety & Governance</button>
+        <button class="nav-tab" data-tab="benchmark">Benchmark</button>
+        <button class="nav-tab" data-tab="audit">Audit Log</button>
+        <button class="nav-tab" data-tab="evaluation">Evaluation (Phase 7)</button>
+      </div>
+      <div class="tagline">
+        <em>"Recover more revenue. Intervene less. Stay in control."</em>
+      </div>
+    </nav>
+
+    <!-- Content Sections -->
+    <main class="main-content">
+      <!-- Loading Overlay -->
+      <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <div id="loading-text" class="loading-text">Processing Recovery Lifecycle...</div>
+      </div>
+
+      <!-- Tab 1: Overview -->
+      <section id="tab-overview" class="tab-panel active">
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Revenue At Risk</div>
+            <div id="kpi-rev-risk" class="kpi-value">INR 0.00</div>
+            <div class="kpi-meta"><span id="kpi-opps">0</span> failed opportunities</div>
+          </div>
+          <div class="kpi-card highlight-green">
+            <div class="kpi-label">Revenue Recovered (REVIVE)</div>
+            <div id="kpi-rev-rec" class="kpi-value">INR 0.00</div>
+            <div class="kpi-meta">Synthetic recovery yield</div>
+          </div>
+          <div class="kpi-card highlight-blue">
+            <div class="kpi-label">Incremental Revenue (ΔR)</div>
+            <div id="kpi-rev-inc" class="kpi-value">INR 0.00</div>
+            <div class="kpi-meta">vs. NO_ACTION baseline</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Recovery Rate</div>
+            <div id="kpi-rec-rate" class="kpi-value">0.0%</div>
+            <div class="kpi-meta">Intervention precision: <span id="kpi-precision">0.0%</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Interventions Attempted</div>
+            <div id="kpi-actions-exec" class="kpi-value">0</div>
+            <div class="kpi-meta"><span id="kpi-policy-auth">0</span> policy authorized</div>
+          </div>
+          <div class="kpi-card highlight-yellow">
+            <div class="kpi-label">Human Review Queue</div>
+            <div id="kpi-human-rev" class="kpi-value">0</div>
+            <div class="kpi-meta">Confidence / high-value gates</div>
+          </div>
+          <div class="kpi-card highlight-red">
+            <div class="kpi-label">Safety Blocks</div>
+            <div id="kpi-safety-blocks" class="kpi-value">0</div>
+            <div class="kpi-meta">Prevented by Policy Engine</div>
+          </div>
+        </div>
+
+        <!-- Action Breakdown & Comparison Grid -->
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Action Selection Breakdown</h3>
+              <span class="panel-sub">Why REVIVE doesn't blindly retry everything</span>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Action Type</th>
+                    <th>Recommended</th>
+                    <th>Authorized</th>
+                    <th>Executed</th>
+                    <th>Recovered (INR)</th>
+                    <th>Success Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="action-breakdown-body">
+                  <tr><td colspan="6" class="text-center">No simulation data loaded. Click "Run Recovery Simulation" above.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Zero-Trust Safety & Governance Summary</h3>
+              <span class="panel-sub">Execution boundary protection</span>
+            </div>
+            <div class="safety-summary-grid">
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p002">0</span>
+                <span class="safety-desc">Resolved Payment Blocks (P002)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p003">0</span>
+                <span class="safety-desc">Max-Attempt Violations Prevented (P003)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p004">0</span>
+                <span class="safety-desc">Low Confidence Escalations (P004)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p005">0</span>
+                <span class="safety-desc">High-Risk Fraud Leaks (P005: 0 tolerated)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p007">0</span>
+                <span class="safety-desc">Contact Fatigue Limit Blocks (P007)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-dup">0</span>
+                <span class="safety-desc">Duplicate Executions Prevented</span>
+              </div>
+            </div>
+            <div class="panel-footer-note">
+              🛡️ <strong>Zero-Trust Security Invariant:</strong> Optimization may recommend. Policy may authorize. Execution may act.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Recovery Cases -->
+      <section id="tab-cases" class="tab-panel">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Status:</label>
+            <select id="filter-status" class="select-input">
+              <option value="all">All Cases</option>
+              <option value="recovered">Recovered</option>
+              <option value="blocked">Policy Blocked</option>
+              <option value="human_review">Human Review</option>
+              <option value="no_action">No Action</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Action:</label>
+            <select id="filter-action" class="select-input">
+              <option value="all">All Actions</option>
+              <option value="RETRY">RETRY</option>
+              <option value="REMINDER">REMINDER</option>
+              <option value="PAYMENT_LINK">PAYMENT_LINK</option>
+              <option value="DO_NOTHING">DO_NOTHING</option>
+              <option value="HUMAN_REVIEW">HUMAN_REVIEW</option>
+            </select>
+          </div>
+          <div class="filter-group flex-1">
+            <label>Search:</label>
+            <input type="text" id="filter-search" placeholder="Search Event ID, Customer, or Failure..." class="text-input">
+          </div>
+          <div class="filter-group">
+            <label>Sort By:</label>
+            <select id="sort-by" class="select-input">
+              <option value="default">Timestamp</option>
+              <option value="amount_desc">Amount (High to Low)</option>
+              <option value="score_desc">Recoverability Score</option>
+              <option value="recovered_desc">Recovered Amount</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-container full-height">
+          <table class="data-table interactive-table">
+            <thead>
+              <tr>
+                <th>Event ID</th>
+                <th>Customer</th>
+                <th>Amount (INR)</th>
+                <th>Diagnosis & Confidence</th>
+                <th>Recoverability</th>
+                <th>Action</th>
+                <th>Policy Decision</th>
+                <th>Execution</th>
+                <th>Outcome</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="cases-table-body">
+              <tr><td colspan="10" class="text-center">Loading recovery cases...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab 3: Safety & Governance -->
+      <section id="tab-safety" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Zero-Trust Policy & Safety Rule Governance</h3>
+            <span class="panel-sub">Strict deterministic rule hierarchy enforced before any execution authorization</span>
+          </div>
+          <div class="rules-hierarchy-list">
+            <div class="rule-card">
+              <div class="rule-code">P001</div>
+              <div class="rule-info">
+                <h4>Input & Schema Validation</h4>
+                <p>Verifies transaction amount > 0, currency format, and observable metadata integrity.</p>
+              </div>
+              <div class="rule-type">FAIL CLOSED</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P002</div>
+              <div class="rule-info">
+                <h4>Payment State Resolution Check</h4>
+                <p>Blocks execution if payment is already CAPTURED, SUCCESS, or settled out-of-band.</p>
+              </div>
+              <div class="rule-type">DOUBLE-RECOVERY GUARD</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P003</div>
+              <div class="rule-info">
+                <h4>Automated Attempt Cap Safety (Hard Limit: 2 attempts)</h4>
+                <p>Strictly prohibits a 3rd automated recovery attempt on any payment ID to prevent infinite loops.</p>
+              </div>
+              <div class="rule-type">ATTEMPT CAP</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P004</div>
+              <div class="rule-info">
+                <h4>Diagnostic Confidence Gate (Threshold: >= 0.85)</h4>
+                <p>If root-cause diagnostic certainty < 85%, automated execution is blocked and escalated to Human Review.</p>
+              </div>
+              <div class="rule-type">CONFIDENCE GATE</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P005</div>
+              <div class="rule-info">
+                <h4>High-Risk Fraud & Chargeback Gate</h4>
+                <p>Zero tolerance for automated actions on flagged accounts. Routes to Fraud Risk Review immediately.</p>
+              </div>
+              <div class="rule-type">RISK GATE</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P007</div>
+              <div class="rule-info">
+                <h4>Customer Contact Fatigue Limits (Max 2 contacts)</h4>
+                <p>Limits reminders and payment links to prevent customer communication spam.</p>
+              </div>
+              <div class="rule-type">FATIGUE GUARD</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P008</div>
+              <div class="rule-info">
+                <h4>Mandatory 300-Second Cooldown Interval</h4>
+                <p>Enforces a 5-minute pause between repeated actions on the same transaction.</p>
+              </div>
+              <div class="rule-type">COOLDOWN GUARD</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P010</div>
+              <div class="rule-info">
+                <h4>ExecutionAuthorization Cryptographic Token Issuance</h4>
+                <p>Instantiates an immutable authorization token with policy version strictly when all safety gates pass.</p>
+              </div>
+              <div class="rule-type">AUTHORIZATION</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Benchmark Comparison -->
+      <section id="tab-benchmark" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Comparative Benchmark: REVIVE vs. Baselines</h3>
+            <span class="panel-sub">Rigorous holdout evaluation across 50,000 synthetic transactions (Seeds 101–505)</span>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Strategy</th>
+                  <th>Mean Recovered Revenue (INR)</th>
+                  <th>Mean Incremental Revenue (INR)</th>
+                  <th>Overall Recovery Rate</th>
+                  <th>Intervention Precision</th>
+                  <th>Key Tradeoff / Behavior</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>NO_ACTION</strong></td>
+                  <td>INR 71,342.40</td>
+                  <td>INR 0.00</td>
+                  <td>0.9%</td>
+                  <td>N/A</td>
+                  <td>Passive observation; captures only natural baseline recoveries.</td>
+                </tr>
+                <tr>
+                  <td><strong>NAIVE_RETRY</strong></td>
+                  <td>INR 809,172.38</td>
+                  <td>INR 737,829.97</td>
+                  <td>10.9%</td>
+                  <td>30.8%</td>
+                  <td>Retries everything blindly; generates 69.2% failure friction on declines.</td>
+                </tr>
+                <tr>
+                  <td><strong>RULE_BASED</strong></td>
+                  <td>INR 3,626,512.01</td>
+                  <td>INR 3,555,169.60</td>
+                  <td>48.6%</td>
+                  <td>69.5%</td>
+                  <td>Unconstrained heuristics; lacks zero-trust governance & risk gates.</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>REVIVE (Ours)</strong></td>
+                  <td><strong>INR 2,726,857.62</strong></td>
+                  <td><strong>INR 2,655,515.22</strong></td>
+                  <td><strong>36.5%</strong></td>
+                  <td><strong>56.0%</strong></td>
+                  <td><strong>Contextual optimization + 30.4% Human Review escalation + 2-attempt cap.</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="benchmark-footer-card">
+            <h4>💡 Core Product Takeaway:</h4>
+            <p>REVIVE captures <strong>INR 2,655,515.22</strong> in incremental revenue with <strong>56.0% intervention precision</strong> while actively protecting merchants from fraud leaks ($P005$), respecting customer fatigue limits ($P007$), and enforcing 2-attempt stopping rules ($P003$).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 5: Audit Log -->
+      <section id="tab-audit" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Live Immutable Audit Trail</h3>
+            <span class="panel-sub">Every lifecycle step logged chronologically with deterministic trace metadata</span>
+          </div>
+          <div class="table-container full-height">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Audit ID</th>
+                  <th>Timestamp</th>
+                  <th>Event Type</th>
+                  <th>Payment ID</th>
+                  <th>Customer ID</th>
+                  <th>Action</th>
+                  <th>Event Details</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table-body">
+                <tr><td colspan="7" class="text-center">No audit events recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 6: Evaluation -->
+      <section id="tab-evaluation" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Phase 7 Statistical Holdout Evaluation Summary</h3>
+            <span class="panel-sub">Unseen holdout calibration, Brier score, and bootstrap confidence intervals</span>
+          </div>
+          <div class="eval-metrics-grid">
+            <div class="eval-card">
+              <div class="eval-label">Incremental Revenue (ΔR)</div>
+              <div class="eval-val">INR 2,655,515.22</div>
+              <div class="eval-sub">95% Bootstrap CI: [INR 2,525,483.92, INR 2,787,014.28]</div>
+            </div>
+            <div class="eval-card">
+              <div class="eval-label">Brier Score</div>
+              <div class="eval-val">0.2549</div>
+              <div class="eval-sub">Mean squared probability error</div>
+            </div>
+            <div class="eval-card">
+              <div class="eval-label">Expected Calibration Error</div>
+              <div class="eval-val">25.37%</div>
+              <div class="eval-sub">Evaluated across 10 uniform reliability bins</div>
+            </div>
+            <div class="eval-card">
+              <div class="eval-label">Accounting Balance Status</div>
+              <div class="eval-val text-green">100% BALANCED</div>
+              <div class="eval-sub">RevenueAtRisk = Recovered + Unrecovered</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: Recovery Case Detail Drilldown -->
+    <div id="case-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div>
+            <h2 id="modal-title">Recovery Case: txn_00000000</h2>
+            <div class="modal-sub">Payment ID: <span id="modal-pay-id">pay_000</span> | Customer: <span id="modal-cust-id">cust_000</span></div>
+          </div>
+          <button id="modal-close-btn" class="close-btn">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Two-column drilldown -->
+          <div class="modal-grid">
+            <!-- Left Column: Intelligence -->
+            <div class="modal-col">
+              <div class="card-section">
+                <h3>1. Contextual Diagnosis (Phase 4)</h3>
+                <div class="diag-banner">
+                  <div class="diag-title" id="modal-diag-cat">TRANSIENT</div>
+                  <div class="diag-conf">Confidence: <span id="modal-diag-conf">94.0%</span></div>
+                </div>
+                <p id="modal-diag-expl" class="diag-desc">Failure description</p>
+                <div class="stat-pill-row">
+                  <span class="pill">Risk Signal: <strong id="modal-risk-sig">LOW</strong></span>
+                  <span class="pill">Amount: <strong id="modal-amount">INR 0.00</strong></span>
+                  <span class="pill">Method: <strong id="modal-method">UPI</strong></span>
+                </div>
+              </div>
+
+              <div class="card-section">
+                <h3>2. Recoverability & Action Expected Value</h3>
+                <div class="rec-score-box">
+                  <div class="rec-score-val" id="modal-rec-score">82.5%</div>
+                  <div class="rec-score-meta">Recoverability Tier: <span id="modal-rec-tier" class="badge">HIGH</span></div>
+                </div>
+                <h4>Action Expected Value (EV) Ranking:</h4>
+                <div id="modal-action-scores" class="action-scores-list">
+                  <!-- Dynamic EV Bars -->
+                </div>
+                <h4>Top Explainability Factors:</h4>
+                <ul id="modal-top-factors" class="factors-list">
+                  <!-- Dynamic factors -->
+                </ul>
+              </div>
+            </div>
+
+            <!-- Right Column: Governance & Execution -->
+            <div class="modal-col">
+              <div class="card-section">
+                <h3>3. Safety Gate Checklist (Phase 5)</h3>
+                <div id="modal-policy-badge" class="policy-decision-banner ALLOW">
+                  DECISION: ALLOW (P010_ACTION_APPROVED)
+                </div>
+                <p id="modal-policy-reason" class="policy-reason-text">Policy reason</p>
+
+                <div id="modal-safety-checklist" class="checklist-items">
+                  <!-- Dynamic Checklist -->
+                </div>
+
+                <div class="auth-box">
+                  <div class="auth-label">Execution Authorization ID:</div>
+                  <div id="modal-auth-id" class="auth-token">auth_none</div>
+                </div>
+              </div>
+
+              <div class="card-section">
+                <h3>4. Controlled Execution & Outcome (Phase 6)</h3>
+                <div class="exec-info-grid">
+                  <div>Status: <strong id="modal-exec-status">PENDING</strong></div>
+                  <div>Outcome: <strong id="modal-outcome">NOT_APPLICABLE</strong></div>
+                  <div>Recovered: <strong id="modal-rec-amount" class="text-green">INR 0.00</strong></div>
+                  <div>Ref: <strong id="modal-ext-ref">sim_none</strong></div>
+                </div>
+
+                <div class="exec-btn-wrapper">
+                  <button id="modal-btn-execute" class="btn btn-success btn-large">
+                    ⚡ Execute Simulated Recovery
+                  </button>
+                  <p class="sim-note">Executes strictly through Phase 6 Controlled Executor with state re-validation.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
