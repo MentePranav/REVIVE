@@ -122,8 +122,9 @@ class PolicyEngine:
         # ----------------------------------------------------------------------
         # 4. Action Allowlist Check (P006)
         # ----------------------------------------------------------------------
-        if action.value not in self.config.allowed_actions:
-            trace.append(PolicyTraceItem(rule_id=PolicyRuleId.P006_ACTION_NOT_ALLOWLISTED, passed=False, description=f"Action '{action.value}' is not in approved allowlist."))
+        action_val = action.value if hasattr(action, "value") else str(action)
+        if action_val not in self.config.allowed_actions:
+            trace.append(PolicyTraceItem(rule_id=PolicyRuleId.P006_ACTION_NOT_ALLOWLISTED, passed=False, description=f"Action '{action_val}' is not in approved allowlist."))
             return self._build_decision(
                 decision=PolicyDecisionType.DENY,
                 action=RecoveryAction.DO_NOTHING,
@@ -132,7 +133,7 @@ class PolicyEngine:
                 customer_id=customer_id,
                 primary_rule=PolicyRuleId.P006_ACTION_NOT_ALLOWLISTED,
                 rule_ids=[PolicyRuleId.P006_ACTION_NOT_ALLOWLISTED],
-                reason=f"Proposed action '{action.value}' is not in the approved action allowlist.",
+                reason=f"Proposed action '{action_val}' is not in the approved action allowlist.",
                 trace=trace,
                 timestamp=timestamp
             )
