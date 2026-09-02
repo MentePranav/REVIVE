@@ -790,3 +790,29 @@ body {
   color: var(--text-secondary);
   font-size: 13px;
 }
+
+/* Offline banner */
+.offline-banner {
+  background-color: rgba(239, 68, 68, 0.95);
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 13px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 3000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.offline-banner.hidden { display: none; }
+
+.btn-secondary {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}

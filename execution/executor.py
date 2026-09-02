@@ -3,10 +3,10 @@ Controlled Recovery Execution Simulator for REVIVE.
 Enforces zero-trust execution boundaries, idempotency, live state safety checks, and synthetic outcome recording.
 """
 
-import hashlib
-import uuid
 from datetime import datetime, timezone
+import hashlib
 from typing import Dict, List, Optional, Tuple, Union
+import uuid
 
 from execution.models import (
     AuditEventType,
@@ -49,7 +49,7 @@ class ControlledExecutor:
         """
         local_audit: List[ExecutionAuditEvent] = []
         event_id = event.transaction_id if isinstance(event, Transaction) else event.checkout_id
-        payment_id = f"pay_{event_id.replace('txn_', '').replace('chk_', '')}"
+        payment_id = getattr(event, "payment_id", None) or f"pay_{event_id.replace('txn_', '').replace('chk_', '')}"
         customer_id = event.customer_id
         timestamp = executed_at or getattr(event, "created_at", datetime.now(timezone.utc).isoformat())
 
@@ -109,6 +109,38 @@ class ControlledExecutor:
                 local_audit=local_audit,
                 auth_id=authorization.authorization_id
             )
+
+        if authorization.payment_id and authorization.payment_id != payment_id:
+            return self._fail_closed(
+                reason=f"EXECUTION_BLOCKED_PAYMENT_MISMATCH: Token payment ({authorization.payment_id}) != Event payment ({payment_id}).",
+                status=ExecutionStatus.BLOCKED,
+                event_id=event_id,
+                payment_id=payment_id,
+                customer_id=customer_id,
+                action=authorization.action,
+                timestamp=timestamp,
+                local_audit=local_audit,
+                auth_id=authorization.authorization_id
+            )
+
+        if authorization.authorized_at:
+            try:
+                auth_dt = datetime.fromisoformat(authorization.authorized_at.replace("Z", "+00:00"))
+                curr_dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+                if (curr_dt - auth_dt).total_seconds() > 86400: # Stale by >24h
+                    return self._fail_closed(
+                        reason="EXECUTION_BLOCKED_STALE_AUTHORIZATION: Authorization token timestamp is expired/stale.",
+                        status=ExecutionStatus.BLOCKED,
+                        event_id=event_id,
+                        payment_id=payment_id,
+                        customer_id=customer_id,
+                        action=authorization.action,
+                        timestamp=timestamp,
+                        local_audit=local_audit,
+                        auth_id=authorization.authorization_id
+                    )
+            except Exception:
+                pass
 
         if authorization.action.value not in self.config.allowed_actions:
             return self._fail_closed(
@@ -177,11 +209,11 @@ class ControlledExecutor:
             )
 
         # ----------------------------------------------------------------------
-        # 5. Attempt & Contact Cap Re-Validation
+        # 5. Live Attempt Count & Fatigue Safety Checks
         # ----------------------------------------------------------------------
         if p_state.automated_attempt_count >= self.config.max_automated_actions_per_payment:
             return self._fail_closed(
-                reason=f"EXECUTION_BLOCKED_MAX_ATTEMPTS: Payment reached {p_state.automated_attempt_count} automated attempts.",
+                reason=f"EXECUTION_BLOCKED_MAX_ATTEMPTS: Payment reached maximum automated attempts ({p_state.automated_attempt_count}).",
                 status=ExecutionStatus.BLOCKED,
                 event_id=event_id,
                 payment_id=payment_id,
@@ -252,7 +284,6 @@ class ControlledExecutor:
         # ----------------------------------------------------------------------
         # 7. Synthetic Outcome Simulation (Phase 2 Integration)
         # ----------------------------------------------------------------------
-        # Ground truth is evaluated strictly AFTER action execution
         recovery_outcome = SimulatedRecoveryOutcome.NOT_APPLICABLE
         recovered_amount = 0.0
 

@@ -2,11 +2,13 @@
 
 let activeTab = "overview";
 let currentEventId = null;
+let isExecuting = false;
 
 // DOM Elements
 const loadingOverlay = document.getElementById("loading-overlay");
 const loadingText = document.getElementById("loading-text");
 const caseModal = document.getElementById("case-modal");
+const offlineBanner = document.getElementById("offline-banner");
 
 // Format Currency
 function formatINR(val) {
@@ -28,6 +30,40 @@ function hideLoading() {
   loadingOverlay.classList.add("hidden");
 }
 
+// Network Request Wrapper with Timeout and Correlation ID
+async function apiFetch(url, options = {}) {
+  const correlationId = "client_" + Math.random().toString(36).substring(2, 10);
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Correlation-ID": correlationId,
+    ...(options.headers || {})
+  };
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+  try {
+    const res = await fetch(url, { ...options, headers, signal: controller.signal });
+    clearTimeout(timeoutId);
+    offlineBanner.classList.add("hidden");
+
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({ message: res.statusText }));
+      throw new Error(errJson.message || `Server returned error ${res.status}`);
+    }
+    return await res.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === "AbortError") {
+      throw new Error("Request timed out. Please check backend server status.");
+    }
+    if (err.message.includes("Failed to fetch") || err.message.includes("NetworkError")) {
+      offlineBanner.classList.remove("hidden");
+    }
+    throw err;
+  }
+}
+
 // Tab Switching
 document.querySelectorAll(".nav-tab").forEach(tab => {
   tab.addEventListener("click", () => {
@@ -47,17 +83,19 @@ document.querySelectorAll(".nav-tab").forEach(tab => {
 
 // Run Simulation Action
 document.getElementById("btn-run-sim").addEventListener("click", async () => {
+  const btn = document.getElementById("btn-run-sim");
+  if (btn.disabled) return;
+  btn.disabled = true;
+
   const size = parseInt(document.getElementById("sim-size").value) || 100;
   const seed = parseInt(document.getElementById("sim-seed").value) || 42;
 
-  showLoading(`Generating synthetic batch & running REVIVE on ${size:,} transactions...`);
+  showLoading(`Generating synthetic batch & running REVIVE on ${size.toLocaleString()} transactions...`);
   try {
-    const res = await fetch("/api/simulation/run", {
+    const summary = await apiFetch("/api/simulation/run", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ size, seed, scenario: "balanced" })
     });
-    const summary = await res.json();
     renderOverview(summary);
     if (activeTab === "cases") loadCases();
     if (activeTab === "safety") loadSafety();
@@ -65,6 +103,30 @@ document.getElementById("btn-run-sim").addEventListener("click", async () => {
   } catch (err) {
     alert("Simulation failed: " + err.message);
   } finally {
+    btn.disabled = false;
+    hideLoading();
+  }
+});
+
+// Reset Demo Session Action
+document.getElementById("btn-reset-demo").addEventListener("click", async () => {
+  const btn = document.getElementById("btn-reset-demo");
+  if (btn.disabled) return;
+  btn.disabled = true;
+
+  showLoading("Resetting demo session to deterministic golden state...");
+  try {
+    const summary = await apiFetch("/api/demo/reset", { method: "POST" });
+    document.getElementById("sim-size").value = "100";
+    document.getElementById("sim-seed").value = "42";
+    renderOverview(summary);
+    if (activeTab === "cases") loadCases();
+    if (activeTab === "safety") loadSafety();
+    if (activeTab === "audit") loadAudit();
+  } catch (err) {
+    alert("Reset failed: " + err.message);
+  } finally {
+    btn.disabled = false;
     hideLoading();
   }
 });
@@ -72,8 +134,7 @@ document.getElementById("btn-run-sim").addEventListener("click", async () => {
 // Load Overview KPIs
 async function loadOverview() {
   try {
-    const res = await fetch("/api/overview");
-    const summary = await res.json();
+    const summary = await apiFetch("/api/overview");
     renderOverview(summary);
   } catch (err) {
     console.error("Failed to load overview:", err);
@@ -137,8 +198,7 @@ async function loadCases() {
   if (sort) params.append("sort", sort);
 
   try {
-    const res = await fetch(`/api/recovery-cases?${params.toString()}`);
-    const cases = await res.json();
+    const cases = await apiFetch(`/api/recovery-cases?${params.toString()}`);
     renderCasesTable(cases);
   } catch (err) {
     console.error("Failed to load cases:", err);
@@ -195,8 +255,7 @@ async function openCaseDetail(eventId) {
   currentEventId = eventId;
   showLoading("Fetching Case Intelligence & Audit Trail...");
   try {
-    const res = await fetch(`/api/recovery-cases/${eventId}`);
-    const d = await res.json();
+    const d = await apiFetch(`/api/recovery-cases/${eventId}`);
 
     document.getElementById("modal-title").textContent = `Recovery Case: ${d.event_id}`;
     document.getElementById("modal-pay-id").textContent = d.payment_id;
@@ -295,23 +354,27 @@ async function openCaseDetail(eventId) {
 document.getElementById("modal-close-btn").addEventListener("click", () => caseModal.classList.add("hidden"));
 document.querySelector(".modal-backdrop").addEventListener("click", () => caseModal.classList.add("hidden"));
 
-// Modal Execute Recovery Action
+// Modal Execute Recovery Action (Protected against double-clicks)
 document.getElementById("modal-btn-execute").addEventListener("click", async () => {
-  if (!currentEventId) return;
+  if (!currentEventId || isExecuting) return;
+  isExecuting = true;
+
+  const execBtn = document.getElementById("modal-btn-execute");
+  execBtn.disabled = true;
+  execBtn.textContent = "Executing...";
 
   showLoading("Re-validating Authorization & Executing through Phase 6 Simulator...");
   try {
-    const res = await fetch(`/api/recovery-cases/${currentEventId}/execute`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }
+    const result = await apiFetch(`/api/recovery-cases/${currentEventId}/execute`, {
+      method: "POST"
     });
-    const result = await res.json();
     alert(`Execution Completed:\nStatus: ${result.execution_status}\nOutcome: ${result.recovery_outcome}\nRecovered: ${formatINR(result.recovered_amount)}\nRef: ${result.external_reference || "N/A"}`);
     await openCaseDetail(currentEventId);
     loadOverview();
   } catch (err) {
     alert("Execution error: " + err.message);
   } finally {
+    isExecuting = false;
     hideLoading();
   }
 });
@@ -319,8 +382,7 @@ document.getElementById("modal-btn-execute").addEventListener("click", async () 
 // Load Safety Tab
 async function loadSafety() {
   try {
-    const res = await fetch("/api/safety");
-    const data = await res.json();
+    await apiFetch("/api/safety");
   } catch (err) {
     console.error("Failed to load safety:", err);
   }
@@ -329,8 +391,7 @@ async function loadSafety() {
 // Load Audit Log Tab
 async function loadAudit() {
   try {
-    const res = await fetch("/api/audit");
-    const events = await res.json();
+    const events = await apiFetch("/api/audit");
     const tbody = document.getElementById("audit-table-body");
     tbody.innerHTML = "";
 

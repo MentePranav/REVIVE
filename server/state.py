@@ -7,7 +7,11 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
+import uuid
 
+from core.config import APP_CONFIG
+from core.errors import AuthorizationError, ExecutionError, InputError, PolicyError
+from core.logging import get_logger
 from evaluation.experiment.dataset_splitter import DatasetBundle, DatasetSplitter
 from evaluation.models import EvaluationMetrics
 from execution.batch import BatchExecutionRunner
@@ -38,6 +42,8 @@ from server.models import (
 )
 from simulator.enums import PaymentStatus, RecoveryAction
 
+logger = get_logger("revive.state")
+
 
 class ServerStateManager:
     """Manages active demo state and executes authorized workflows."""
@@ -48,9 +54,9 @@ class ServerStateManager:
         self.executor = ControlledExecutor(self.policy_config)
 
         # Active Session State
-        self.seed: int = 42
-        self.size: int = 100
-        self.scenario: str = "balanced"
+        self.seed: int = APP_CONFIG.default_demo_seed
+        self.size: int = APP_CONFIG.default_demo_size
+        self.scenario: str = APP_CONFIG.default_scenario
         self.bundle: Optional[DatasetBundle] = None
         self.traces: List[ExecutionLifecycleTrace] = []
         self.traces_by_id: Dict[str, ExecutionLifecycleTrace] = {}
@@ -60,20 +66,22 @@ class ServerStateManager:
         self.latest_summary: Optional[SimulationSummaryResponse] = None
 
         # Automatically initialize default session
-        self.initialize_session(seed=42, size=100, scenario="balanced")
+        self.initialize_session(seed=self.seed, size=self.size, scenario=self.scenario)
 
     def initialize_session(self, seed: int = 42, size: int = 100, scenario: str = "balanced") -> SimulationSummaryResponse:
         self.seed = seed
         self.size = size
         self.scenario = scenario
 
-        # 1. Generate Synthetic Dataset
-        self.bundle = DatasetSplitter.generate_evaluation_set(seed=seed, transaction_count=size)
-
-        # 2. Reset Contexts
+        # 1. Reset Contexts and Executor Cache
+        if hasattr(self.executor, "execution_cache"):
+            self.executor.execution_cache.clear()
         self.payment_states.clear()
         self.customer_states.clear()
         self.audit_log.clear()
+
+        # 2. Generate Synthetic Dataset
+        self.bundle = DatasetSplitter.generate_evaluation_set(seed=seed, transaction_count=size)
 
         # 3. Run Controlled Execution Pipeline across all opportunities
         runner = BatchExecutionRunner(self.policy_config)
@@ -127,6 +135,14 @@ class ServerStateManager:
         )
 
         return self.latest_summary
+
+    def reset_demo_session(self) -> SimulationSummaryResponse:
+        """Resets the demo session to a known deterministic golden state."""
+        return self.initialize_session(
+            seed=APP_CONFIG.default_demo_seed,
+            size=APP_CONFIG.default_demo_size,
+            scenario=APP_CONFIG.default_scenario
+        )
 
     def get_summary(self) -> SimulationSummaryResponse:
         if not self.latest_summary:
@@ -331,20 +347,14 @@ class ServerStateManager:
             audit_events=audit_serialized
         )
 
-    def execute_recovery(self, event_id: str) -> ExecuteRecoveryResponse:
+    def execute_recovery(self, event_id: str, correlation_id: Optional[str] = None) -> ExecuteRecoveryResponse:
         """
         Executes a recovery action strictly through Phase 5 Policy & Phase 6 Controlled Executor.
         Re-validates authorization and live payment state before dispatching simulated action.
         """
         trace = self.traces_by_id.get(event_id)
         if not trace or not self.bundle:
-            return ExecuteRecoveryResponse(
-                success=False,
-                execution_status=ExecutionStatus.BLOCKED.value,
-                recovery_outcome=SimulatedRecoveryOutcome.NOT_APPLICABLE.value,
-                recovered_amount=0.0,
-                message=f"Event '{event_id}' not found in active session."
-            )
+            raise InputError(f"Event '{event_id}' not found in active session.", correlation_id=correlation_id)
 
         auth = trace.policy_decision.execution_authorization
         if not auth or trace.policy_decision.decision != PolicyDecisionType.ALLOW:
@@ -436,13 +446,19 @@ class ServerStateManager:
         report_path = Path("experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md")
         summary_md = None
         if report_path.exists():
-            summary_md = report_path.read_text(encoding="utf-8")
+            try:
+                summary_md = report_path.read_text(encoding="utf-8")
+            except Exception:
+                summary_md = "Evaluation artifact invalid or incomplete. Run Phase 7 CLI to regenerate."
 
         summary_json_path = Path("experiments/benchmark_5seeds_10k/summary.json")
         strat_data = {}
         if summary_json_path.exists():
-            with open(summary_json_path, "r", encoding="utf-8") as f:
-                strat_data = json.load(f).get("strategy_aggregates", {})
+            try:
+                with open(summary_json_path, "r", encoding="utf-8") as f:
+                    strat_data = json.load(f).get("strategy_aggregates", {})
+            except Exception:
+                strat_data = {"error": "Evaluation artifact corrupted or incomplete."}
 
         return BenchmarkResponse(
             evaluated_at=datetime.now(timezone.utc).isoformat(),

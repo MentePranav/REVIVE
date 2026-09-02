@@ -11,6 +11,11 @@
 </head>
 <body>
   <div id="app">
+    <!-- Offline Banner -->
+    <div id="offline-banner" class="offline-banner hidden">
+      ⚠️ <strong>Backend Unavailable:</strong> Unable to connect to REVIVE server. Please ensure the local server is running on <code>http://localhost:8000</code>.
+    </div>
+
     <!-- Top Navigation Header -->
     <header class="header">
       <div class="header-left">
@@ -25,6 +30,9 @@
       </div>
       <div class="header-right">
         <div class="sim-controls">
+          <button id="btn-reset-demo" class="btn btn-secondary" title="Reset to deterministic golden state">
+            🔄 Reset Demo
+          </button>
           <label for="sim-size">Batch Size:</label>
           <select id="sim-size" class="select-input">
             <option value="100" selected>100 txns</option>
@@ -34,7 +42,7 @@
           <label for="sim-seed">Seed:</label>
           <input type="number" id="sim-seed" value="42" class="num-input">
           <button id="btn-run-sim" class="btn btn-primary">
-            <span class="btn-icon">⚡</span> Run Recovery Simulation
+            <span class="btn-icon">⚡</span> Run Simulation
           </button>
         </div>
       </div>
@@ -124,7 +132,7 @@
                   </tr>
                 </thead>
                 <tbody id="action-breakdown-body">
-                  <tr><td colspan="6" class="text-center">No simulation data loaded. Click "Run Recovery Simulation" above.</td></tr>
+                  <tr><td colspan="6" class="text-center">No simulation data loaded. Click "Run Simulation" above.</td></tr>
                 </tbody>
               </table>
             </div>
