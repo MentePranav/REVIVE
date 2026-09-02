@@ -42,7 +42,7 @@
 
 - *First, **Contextual Diagnosis**: We analyze observable features—error codes, payment methods, customer tenure, and history—to isolate the failure root cause.*
 - *Second, **Recoverability & Net Expected Value Optimization**: We estimate the calibrated probability of recovery and select the action that maximizes net expected revenue after deducting processing costs and customer friction.*
-- *Third, **Zero-Trust Policy Gate**: Intelligence can only recommend. An independent safety engine verifies attempt caps, cooldowns, fraud risk, and payment state before generating a cryptographic authorization token.*
+- *Third, **Zero-Trust Policy Gate**: Intelligence can only recommend. An independent safety engine verifies attempt caps, cooldowns, fraud risk, and payment state before issuing a validated ExecutionAuthorization only after policy gates pass.*
 - *Finally, **Controlled Execution**: We execute simulated recoveries with SHA-256 idempotency locks and record an immutable audit trail."*
 
 ---
@@ -69,7 +69,7 @@
 - *The unconstrained **`RULE_BASED`** strategy actually achieved higher gross synthetic recovery (₹3,626,512) by aggressively intervening on every single failure.*
 - *We deliberately did **not** optimize REVIVE to maximize unconstrained gross revenue at all costs.*
 - ***REVIVE is a governed recovery system**: It recovered **₹2,726,857.62 (75.2% of the rule-based gross revenue)** while using **378 fewer interventions per 10k transactions—a 22.4% reduction in interventions**.*
-- *Against the passive baseline, REVIVE delivered **₹2,655,515.22 in incremental revenue ($\Delta R$)** with **56.04% precision** (compared to just 24.83% for naive retries), while escalating 624 ambiguous cases (5.64%) to human review and allowing zero automated high-risk leaks.*
+- *Against the passive baseline, REVIVE delivered **₹2,655,515.22 in incremental revenue ($\Delta R$)** with **56.04% precision** (compared to 30.84% for naive retries), while escalating 624 ambiguous cases (5.64%) to human review and allowing zero automated high-risk leaks.*
 
 *This demonstrates the deliberate balance: capturing high incremental revenue while respecting merchant risk and customer friction limits."*
 

@@ -39,7 +39,7 @@
    - `simulator/` — Controlled synthetic transaction & lifecycle generator.
    - `baselines/` — Deterministic `NO_ACTION`, `NAIVE_RETRY`, `RULE_BASED` baseline implementations.
    - `agent/` — 30+ feature extractor, multi-class diagnostic classifier, and net Expected Value ($EV$) action optimizer (deterministic and interpretable; avoiding external LLM API latencies).
-   - `policy/` — Zero-trust safety engine enforcing rules $P001$–$P010$ with cryptographic token generation.
+   - `policy/` — Zero-trust safety engine enforcing rules $P001$–$P010$ with validated authorization token generation.
    - `execution/` — Controlled execution simulator with SHA-256 idempotency locks and state re-validation.
    - `evaluation/` — Multi-seed statistical holdout evaluator with Brier score calibration and bootstrap analysis.
 2. **Observability & Application**:

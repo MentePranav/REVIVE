@@ -36,7 +36,7 @@ In autonomous revenue recovery, relying solely on an optimization model to gover
                 ▼                                ▼
 ┌────────────────────────────────┐ ┌────────────────────────────────┐
 │     ExecutionAuthorization     │ │    No Execution Token Issued   │
-│  (Cryptographic-style Token)   │ │  (Execution Structurally Blocked)│
+│  (validated policy-issued-style Token)   │ │  (Execution Structurally Blocked)│
 └───────────────┬────────────────┘ └─────────────┬──────────────────┘
                 │                                │
                 ▼                                ▼

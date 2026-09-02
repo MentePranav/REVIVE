@@ -39,7 +39,7 @@ REVIVE does not blindly retry failed payments. Instead, it follows a closed-loop
 1. **Diagnoses the root cause** using multi-factor telemetry (error codes, customer history, payment method, retry count).
 2. **Estimates recoverability ($P_{rec}$)** and calculates Net Expected Value ($EV = P_{rec} \cdot \text{Amount} - \text{Cost} - \text{Friction}$) across actions (`RETRY`, `REMINDER`, `PAYMENT_LINK`, `DO_NOTHING`).
 3. **Enforces institutional safety policies** ($P001$–$P010$) before any action can occur.
-4. **Executes only authorized actions** via a cryptographically bound `ExecutionAuthorization` token.
+4. **Executes only authorized actions** via a validated `ExecutionAuthorization` issued only after policy gates pass.
 5. **Maintains a complete audit trail** with immutable decision traces and correlation IDs.
 
 ---
@@ -99,19 +99,19 @@ Key Policy Safeguards:
 - **$P007$ (Contact Fatigue Limit)**: Max 2 communications per customer.
 - **$P008$ (Cooldown Enforcement)**: Minimum 300-second interval between automated attempts.
 - **$P009$ (Template Whitelist)**: Only approved, registered communication templates allowed.
-- **$P010$ (Execution Authorization)**: Issues immutable token only when all rules pass.
+- **$P010$ (Execution Authorization)**: Issues validated ExecutionAuthorization only when all rules pass.
 
 ---
 
 ## 7. Benchmark Results (50,000 Holdout Transactions)
 Evaluated across **5 unseen holdout seeds** (Seeds 101, 202, 303, 404, 505) with 10,000 transactions per seed (50,000 total):
 
-| Strategy | Mean Recovered Revenue | Overall Recovery Rate | Interventions per 10k | Intervention Precision | Human Review Escalation | High-Risk Leaks |
+| Strategy | Mean Recovered Revenue | Recovery Rate (Failed Opps) | Interventions per 10k | Intervention Precision | Human Review Escalation | High-Risk Leaks |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`NO_ACTION`** | ₹71,342.40 | 0.96% | 0 | 0.00% | 0 | 0 |
-| **`NAIVE_RETRY`** | ₹809,172.38 | 10.85% | 1,023 | 24.83% | 0 | 18 |
-| **`RULE_BASED`** | ₹3,626,512.01 | 48.61% | 1,689 | 64.00% | 0 | 29 |
-| **`REVIVE`** *(Governed)* | **₹2,726,857.62** | **36.53%** | **1,311** | **56.04%** | **624 (5.64%)** | **0** |
+| **`NO_ACTION`** | ?71,342.40 | 0.94% | 0 | 0.00% | 0 | 0 |
+| **`NAIVE_RETRY`** | ?809,172.38 | 10.86% | 1,342.4 | 30.84% | 0 | 18 |
+| **`RULE_BASED`** | ?3,626,512.01 | 48.58% | 1,690.0 | 69.46% | 0 | 29 |
+| **`REVIVE`** *(Governed)* | **?2,726,857.62** | **36.53%** | **1,312.0** | **56.04%** | **624 (5.64%)** | **0** |
 
 *All benchmark results are synthetic simulation results and do not represent live Razorpay production performance.*
 
@@ -121,7 +121,7 @@ Evaluated across **5 unseen holdout seeds** (Seeds 101, 202, 303, 404, 505) with
 In this simulation, **`RULE_BASED` achieved higher gross recovery (₹3,626,512.01) than REVIVE (₹2,726,857.62).** 
 
 This is not a defect—it is the deliberate consequence of institutional safety boundaries:
-1. **Unconstrained vs. Governed**: `RULE_BASED` is an unconstrained heuristic that fired 28.8% more interventions (1,689 vs 1,311 per 10k), retried high-risk transactions without restriction, and ignored contact cooldowns.
+1. **Unconstrained vs. Governed**: `RULE_BASED` is an unconstrained heuristic that fired 28.8% more interventions (1,690.0 vs 1,312.0 per 10k), retried high-risk transactions without restriction, and ignored contact cooldowns.
 2. **Safety Boundary Enforcement**: REVIVE achieved **₹2,655,515.22 in incremental revenue over `NO_ACTION`** while:
    - Reducing merchant interventions by **22.37%** (378 fewer interventions per 10k transactions).
    - Enforcing a strict **2-attempt maximum ceiling** ($P003$).

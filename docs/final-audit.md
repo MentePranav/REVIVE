@@ -82,7 +82,7 @@ Official evaluation artifacts located in `experiments/benchmark_5seeds_10k/`:
 
 1. **Zero External Credentials**: Verified that no real Razorpay API keys, banking credentials, cloud tokens, or live webhook listeners are present or required.
 2. **Fail-Closed Boundary**: Verified through 20 adversarial test cases that any malformed input, stale authorization token, or ambiguous confidence halts execution immediately without dispatching recovery actions.
-3. **Execution Isolation**: Client frontend cannot manufacture authorization tokens; execution requires an explicit cryptographic token issued by Phase 5 policy validation.
+3. **Execution Isolation**: Client frontend cannot manufacture authorization tokens; execution requires an explicit `ExecutionAuthorization` issued only after Phase 5 policy validation.
 4. **Data Isolation**: Synthetic models never inspect hidden counterfactual outcomes or ground truth during feature extraction or policy evaluation.
 
 ---

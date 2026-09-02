@@ -22,7 +22,7 @@ Traditional recovery systems couple optimization directly with execution, meanin
             │
             ▼
 ┌─────────────────────────┐
-│ EXECUTION AUTHORIZATION │  --> Issues: Cryptographic Token (P010) strictly if ALLOW
+│ EXECUTION AUTHORIZATION │  --> Issues: Validated ExecutionAuthorization (P010) strictly if ALLOW
 └───────────┬─────────────┘
             │
             ▼
@@ -70,7 +70,7 @@ Before any action is authorized, it must pass an unbroken chain of deterministic
 ### $P009$ — Template Whitelist Check
 - Communication templates must match pre-registered merchant templates (`REMINDER_STANDARD_V1`, `PAYMENT_LINK_STANDARD_V1`).
 
-### $P010$ — Cryptographic Authorization Token Issuance
+### $P010$ — validated ExecutionAuthorization token Issuance
 - An `ExecutionAuthorization` token containing an authorization ID, policy version, and timestamp is generated **only** when all safety rules evaluate to `ALLOW`.
 
 ---

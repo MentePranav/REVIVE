@@ -78,7 +78,7 @@ On the top header and metric cards, observe:
    - **Recoverability Score:** Calibrated probability ($P_{rec}$) and expected value breakdown.
    - **Recommended Action:** (e.g., `PAYMENT_LINK` or `RETRY`).
    - **Policy Evaluation Trace:** Shows all 10 rules ($P001$–$P010$) validated with pass checks.
-   - **Execution Authorization:** Shows the cryptographic authorization token issued to the executor.
+   - **Execution Authorization:** Shows the validated ExecutionAuthorization issued only after policy gates pass.
 
 ### Step 4.3: Execute a Live Simulated Action
 1. On any case with **Status: `ACTION_AUTHORIZED`**, click the **"Execute Action"** button.
@@ -92,7 +92,7 @@ On the top header and metric cards, observe:
 1. In the status filter dropdown, select **`HUMAN_REVIEW_REQUIRED`**.
 2. Click **"Inspect"** on a case with **Primary Rule: `P004_LOW_DIAGNOSIS_CONFIDENCE`** or **`P005_HIGH_RISK_GATE`**:
    - Observe that the intelligence engine's recommendation was **NOT** executed.
-   - Notice that **Zero Authorization Token** was generated.
+   - Notice that **Zero ExecutionAuthorization** was generated.
    - The case was safely escalated to Human Review to prevent customer harassment or fraud losses.
 
 ### Step 4.5: Inspect the 50,000-Transaction Comparative Benchmark

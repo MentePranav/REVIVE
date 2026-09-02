@@ -76,4 +76,4 @@ Switch to the **Recovery Cases** tab:
 - **Q: How is ground truth isolated from the AI model?**
   *A: The feature extractor only receives observable public transaction schemas. Ground truth counterfactual matrices are strictly isolated and queried only inside the post-authorization execution sandbox.*
 - **Q: Can the web UI execute arbitrary actions?**
-  *A: No. The backend validates the cryptographic `ExecutionAuthorization` token issued by Phase 5 and verifies live payment state before dispatching any simulated action.*
+  *A: No. The backend validates the policy-issued `ExecutionAuthorization` issued by Phase 5 and verifies live payment state before dispatching any simulated action.*

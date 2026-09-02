@@ -5,9 +5,9 @@
 REVIVE (Autonomous Revenue Recovery Agent) is engineered with zero-trust execution boundaries, deterministic evaluation pipelines, and fail-safe error handling.
 
 ### Core Architectural Principles
-1. **Zero-Trust Boundary**: Intelligence models and user-facing clients can only recommend or request actions; only the `PolicyEngine` can authorize actions, and the `ControlledExecutor` validates cryptographic tokens before simulating any state transition.
+1. **Zero-Trust Boundary**: Intelligence models and user-facing clients can only recommend or request actions; only the `PolicyEngine` can authorize actions, and the `ControlledExecutor` validates validated policy-issued tokens before simulating any state transition.
 2. **Fail-Closed Default**: In any condition involving missing data, malformed payloads, ambiguous confidence, or unhandled exceptions, REVIVE fails closed: `NO ACTION IS EXECUTED`.
-3. **Reproducibility by Construction**: All synthetic data generation, ML feature extraction, rule evaluation, and holdout experimentation operate under explicit pseudo-random seeds. A cryptographic SHA-256 reproducibility fingerprint is computed across configuration, engine versions, and dataset seeds.
+3. **Reproducibility by Construction**: All synthetic data generation, ML feature extraction, rule evaluation, and holdout experimentation operate under explicit pseudo-random seeds. A validated policy-issued SHA-256 reproducibility fingerprint is computed across configuration, engine versions, and dataset seeds.
 4. **Deterministic Observability**: Every lifecycle stage emits structured JSON log events with correlation IDs (`X-Correlation-ID`) and an immutable in-memory audit log. Sensitive customer tokens and API credentials are automatically redacted (`[REDACTED]`).
 
 ---

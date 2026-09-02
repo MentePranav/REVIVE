@@ -28,7 +28,7 @@ Open the Web UI: **`http://localhost:8000`**
 
 ### 0:00–0:30 | Problem & Solution Context
 - **Problem**: Digital commerce loses billions to failed transactions and abandoned carts. Blind retries cause issuer throttling and fee waste; uncoordinated spam damages customer trust; uncontrolled retrying of high-risk accounts creates fraud chargebacks.
-- **REVIVE**: A governed autonomous revenue recovery decision-and-execution system. It diagnoses root causes, estimates recoverability, enforces institutional safety boundaries, and executes only cryptographically authorized actions.
+- **REVIVE**: A governed autonomous revenue recovery decision-and-execution system. It diagnoses root causes, estimates recoverability, enforces institutional safety boundaries, and executes only validated actions authorized after policy gates pass.
 
 ---
 
@@ -55,7 +55,7 @@ $$\text{Untrusted Input} \longrightarrow \text{Contextual Intelligence} \longrig
 2. Click **Inspect** on the case:
    - **Intelligence**: Reports failure category (`TRANSIENT`), high confidence ($\ge 90\%$), and high recoverability score.
    - **Safety Gate**: All 10 rules show green checkmarks, and primary rule is `P010_ACTION_APPROVED`.
-   - **Authorization Token**: A cryptographic `ExecutionAuthorization` token (`auth_...`) is generated.
+   - **Authorization Token**: A validated `ExecutionAuthorization` (`auth_...`) is issued only after all policy gates pass.
 3. Click **Execute Action**.
 4. **Observe**: Execution status transitions to `EXECUTED`, outcome changes to `RECOVERED`, and a synthetic reference (`sim_pl_...`) is logged in the audit trail.
 
@@ -67,7 +67,7 @@ $$\text{Untrusted Input} \longrightarrow \text{Contextual Intelligence} \longrig
 1. Filter the status dropdown by **`HUMAN_REVIEW_REQUIRED`**.
 2. Click **Inspect** on a case with **Primary Rule: `P004_LOW_DIAGNOSIS_CONFIDENCE`**:
    - **Observe**: Model confidence is below the $85\%$ threshold.
-   - **Safety Invariant**: The policy engine refuses automated execution (`HUMAN_REVIEW`). **Zero authorization token is generated.** The execution button is disabled.
+   - **Safety Invariant**: The policy engine refuses automated execution (`HUMAN_REVIEW`). **Zero ExecutionAuthorization is generated.** The execution button is disabled.
 
 #### Step 4: High-Risk Fraud Gating ($P005$)
 1. Inspect a transaction flagged with high risk telemetry or prior chargeback history.

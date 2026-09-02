@@ -53,7 +53,7 @@ $$\text{Revenue at Risk} \longrightarrow \text{Diagnosis} \longrightarrow \text{
 
 The frontend is strictly a presentation layer and **cannot manufacture execution authorizations**:
 1. When clicking **"Execute Simulated Recovery"**, the UI dispatches a `POST /api/recovery-cases/{id}/execute` request.
-2. The backend re-validates the cryptographic `ExecutionAuthorization` token.
+2. The backend re-validates the policy-issued `ExecutionAuthorization`.
 3. The backend verifies live payment state (ensuring payment has not been captured out-of-band).
 4. The action is executed strictly through Phase 6 `ControlledExecutor` and an immutable audit event is recorded.
 5. If policy decision is `DENY` or `HUMAN_REVIEW`, automated execution is hard-blocked.

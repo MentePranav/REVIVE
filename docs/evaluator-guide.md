@@ -49,7 +49,7 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** reposito
 ## 4. Step 4 — Verify Deterministic Reproducibility (30 Seconds)
 - Open **[http://localhost:8000/api/health](http://localhost:8000/api/health)**:
   - Verify `"status": "healthy"`.
-  - Check the cryptographic SHA-256 reproducibility fingerprint: `"35b2e65d2efaa521"`.
+  - Check the SHA-256 reproducibility fingerprint: `"35b2e65d2efaa521"`.
 
 ---
 

@@ -29,12 +29,12 @@ The system operates 100% locally and offline, requiring **zero external cloud de
 
 Evaluated across 5 independent holdout seeds (Seeds 101, 202, 303, 404, 505) with 10,000 transactions per seed:
 
-| Strategy | Mean Recovered Revenue | Recovery Rate | Interventions per 10k | Precision | Human Escalations | High-Risk Leaks |
+| Strategy | Mean Recovered Revenue | Recovery Rate (Failed Opps) | Interventions per 10k | Intervention Precision | Human Review Escalation | High-Risk Leaks |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`NO_ACTION`** | ₹71,342.40 | 0.96% | 0 | 0.00% | 0 | 0 |
-| **`NAIVE_RETRY`** | ₹809,172.38 | 10.85% | 1,023 | 24.83% | 0 | 18 |
-| **`RULE_BASED`** | ₹3,626,512.01 | 48.61% | 1,689 | 64.00% | 0 | 29 |
-| **`REVIVE`** *(Governed)* | **₹2,726,857.62** | **36.53%** | **1,311** | **56.04%** | **624 (5.64%)** | **0** |
+| **`NO_ACTION`** | ?71,342.40 | 0.94% | 0 | 0.00% | 0 | 0 |
+| **`NAIVE_RETRY`** | ?809,172.38 | 10.86% | 1,342.4 | 30.84% | 0 | 18 |
+| **`RULE_BASED`** | ?3,626,512.01 | 48.58% | 1,690.0 | 69.46% | 0 | 29 |
+| **`REVIVE`** *(Governed)* | **?2,726,857.62** | **36.53%** | **1,312.0** | **56.04%** | **624 (5.64%)** | **0** |
 
 ### Verified Tradeoff & Positioning:
 - **`RULE_BASED`** achieved higher raw synthetic recovery by operating with unconstrained aggression (retrying high-risk accounts, ignoring fatigue limits).
@@ -44,7 +44,7 @@ Evaluated across 5 independent holdout seeds (Seeds 101, 202, 303, 404, 505) wit
 
 ## 4. Key Implemented Safeguards ($P001$–$P010$)
 
-1. **Recommendation ≠ Authorization:** The execution layer strictly refuses actions without a cryptographically valid `ExecutionAuthorization` token.
+1. **Recommendation ≠ Authorization:** The execution layer strictly refuses actions without a validated `ExecutionAuthorization` issued only after policy gates pass.
 2. **$P001$ (Input Validation):** Rejects invalid amounts, empty customer IDs, or malformed schemas.
 3. **$P002$ (Anti-Double Recovery):** Re-validates payment state before execution; blocks actions on already resolved payments.
 4. **$P003$ (Hard Attempt Ceiling):** Maximum of 2 automated recovery attempts per payment.

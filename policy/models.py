@@ -38,7 +38,7 @@ class PolicyTraceItem(BaseModel):
 
 class ExecutionAuthorization(BaseModel):
     """
-    Cryptographically isolated authorization token permitting execution.
+    Validated policy-issued authorization token permitting execution.
     Only instantiated when policy evaluation produces ALLOW.
     """
     authorization_id: str

@@ -26,7 +26,7 @@ The adversarial validation suite (`tests/test_red_team_adversarial.py` + `tests/
 
 | Category | Attack Vector Tested | Result | Invariant Enforced |
 | :--- | :--- | :--- | :--- |
-| **A. Authorization Bypass** | Raw recommendation without auth, raw action string, forged token signature, customer/payment ID mismatch, altered action type. | **100% BLOCKED** | No execution occurs without a cryptographically valid `ExecutionAuthorization` token. |
+| **A. Authorization Bypass** | Raw recommendation without auth, raw action string, forged token signature, customer/payment ID mismatch, altered action type. | **100% BLOCKED** | No execution occurs without a validated `ExecutionAuthorization` issued only after policy gates pass. |
 | **B. Stale Authorization** | Tokens > 24 hours old, tokens issued before payment settled out-of-band, tokens used after attempt cap reached. | **100% BLOCKED** | Executor performs live state re-validation prior to action simulation. |
 | **C. Duplicate & Idempotency** | Double-clicking execute in UI, rapid concurrent execution requests, replay of previous authorizations. | **100% IDEMPOTENT** | SHA-256 idempotency cache ensures at most 1 simulated action per key. |
 | **D. Attempt Limits** | Manipulated attempt counters, 3rd automated recovery attempt, out-of-bounds attempt values. | **100% ENFORCED** | Hard 2-attempt maximum ceiling ($P003$) is completely un-bypassable. |
