@@ -55,8 +55,10 @@ data/policy_analysis/
 data/execution_analysis/
 !data/.gitkeep
 
-# Experiment Outputs
-experiments/
+# Experiment Outputs (Keep benchmark_5seeds_10k gold benchmark artifact)
+experiments/*
+!experiments/benchmark_5seeds_10k/
+!experiments/benchmark_5seeds_10k/**
 
 # Logs & Temporary Artifacts
 logs/

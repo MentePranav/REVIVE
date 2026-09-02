@@ -17,7 +17,7 @@ Traditional recovery systems couple optimization directly with execution, meanin
             │
             ▼
 ┌─────────────────────────┐
-│  POLICY & SAFETY ENGINE │  --> Evaluates: Deterministic Safety Gates (P001 - P008)
+│  POLICY & SAFETY ENGINE │  --> Evaluates: Deterministic Safety Gates (P001 - P009)
 └───────────┬─────────────┘
             │
             ▼
@@ -33,12 +33,12 @@ Traditional recovery systems couple optimization directly with execution, meanin
 
 ---
 
-## 2. Comprehensive Policy Gate Hierarchy
+## 2. Comprehensive Policy Gate Hierarchy ($P001$–$P010$)
 
 Before any action is authorized, it must pass an unbroken chain of deterministic rules:
 
 ### $P001$ — Input & Schema Integrity
-- Validates that transaction amount is positive ($> 0$), currency is recognized, and required identifiers (`payment_id`, `customer_id`) exist.
+- Validates that transaction amount is strictly positive ($> 0$), currency is recognized (`INR`), and required identifiers (`payment_id`, `customer_id`) exist.
 - **Fail-Closed**: Any schema irregularity or negative value is rejected immediately.
 
 ### $P002$ — Anti-Double-Recovery & Payment State Check
@@ -55,7 +55,10 @@ Before any action is authorized, it must pass an unbroken chain of deterministic
 
 ### $P005$ — High-Risk Fraud & Risk Gate
 - Enforces zero automated interventions on accounts flagged with fraud, suspicious IP velocity, or high chargeback history.
-- Flagged cases are blocked from automated retries and escalated immediately to the risk review team.
+- Flagged cases are blocked from automated retries and escalated immediately to Human Review.
+
+### $P006$ — Action Allowlist Check
+- Enforces that only enumerated, permitted actions (`RETRY`, `REMINDER`, `PAYMENT_LINK`, `DO_NOTHING`) can be authorized. Injected strings (e.g. `"REFUND"`) fail closed cleanly.
 
 ### $P007$ — Customer Contact Fatigue Limits
 - Protects customers from notification spam.
@@ -63,6 +66,9 @@ Before any action is authorized, it must pass an unbroken chain of deterministic
 
 ### $P008$ — Mandatory Cooldown Interval
 - Enforces a minimum **300-second (5-minute) pause** between successive recovery attempts on the same transaction to allow bank queues to settle.
+
+### $P009$ — Template Whitelist Check
+- Communication templates must match pre-registered merchant templates (`REMINDER_STANDARD_V1`, `PAYMENT_LINK_STANDARD_V1`).
 
 ### $P010$ — Cryptographic Authorization Token Issuance
 - An `ExecutionAuthorization` token containing an authorization ID, policy version, and timestamp is generated **only** when all safety rules evaluate to `ALLOW`.
@@ -90,9 +96,11 @@ Under every anomalous or edge condition, REVIVE defaults to **Fail-Closed**:
 
 ---
 
-## 5. Human Review Boundary
+## 5. Explicit Boundary: Simulation vs. Production
 
-REVIVE recognizes that full automation is not appropriate for all edge cases. The **Human Review Queue** serves as the authorized safety valve for:
-1. Ambiguous diagnostic classifications (Confidence $< 85\%$).
-2. Large transactions exceeding merchant anomaly thresholds.
-3. Flagged customer risk accounts requiring manual verification.
+| Proven in Simulation & Regression Suite | Requires Production Validation & Setup |
+| :--- | :--- |
+| **Proven**: Strict zero-trust separation between intelligence and executor. | **Requires**: Integration with live Razorpay webhooks (`payment.failed`, `order.paid`). |
+| **Proven**: Hard 2-attempt stopping cap ($P003$) and 300s cooldown enforcement. | **Requires**: Distributed idempotency store (e.g. Redis/PostgreSQL) across server replicas. |
+| **Proven**: 100% high-risk fraud cases routed to Human Review in synthetic data. | **Requires**: Live risk scoring telemetry and KYC/AML compliance feeds. |
+| **Proven**: 69 adversarial edge cases tested with 0 unauthorized executions. | **Requires**: Canary A/B testing on live merchant traffic with safety circuit breakers. |

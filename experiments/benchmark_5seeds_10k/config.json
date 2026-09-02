@@ -1,0 +1,42 @@
+{
+  "experiment_id": "exp_revive_benchmark_001",
+  "dev_seed": 42,
+  "eval_seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "dev_transaction_count": 2000,
+  "eval_transaction_count": 10000,
+  "bootstrap_samples": 1000,
+  "confidence_level": 0.95,
+  "policy_config": {
+    "policy_version": "1.0.0",
+    "minimum_diagnosis_confidence": 0.85,
+    "minimum_recoverability_for_automation": 0.3,
+    "max_retry_attempts": 2,
+    "max_automated_actions_per_payment": 2,
+    "max_customer_contact_actions": 2,
+    "minimum_action_cooldown_seconds": 300,
+    "high_risk_requires_human": true,
+    "reject_unresolved_payments_only": true,
+    "allowed_actions": [
+      "DO_NOTHING",
+      "RETRY",
+      "REMINDER",
+      "PAYMENT_LINK",
+      "HUMAN_REVIEW"
+    ],
+    "approved_templates": [
+      "REMINDER_STANDARD_V1",
+      "PAYMENT_LINK_STANDARD_V1",
+      "CHECKOUT_RECOVERY_V1"
+    ]
+  },
+  "engine_version": "0.4.0",
+  "policy_version": "1.0.0",
+  "executor_version": "1.0.0",
+  "experiment_version": "1.0.0"
+}
