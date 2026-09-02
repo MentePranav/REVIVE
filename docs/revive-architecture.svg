@@ -1,0 +1,164 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="100%" height="100%" style="background:#0b0f19; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="policyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#831843" />
+      <stop offset="100%" stop-color="#500724" />
+    </linearGradient>
+    <linearGradient id="execGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+
+    <!-- Filters & Shadows -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.5" />
+    </filter>
+    <filter id="accentGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#3b82f6" flood-opacity="0.3" />
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+    </marker>
+  </defs>
+
+  <!-- Title & Header -->
+  <rect x="40" y="30" width="1120" height="70" rx="12" fill="#111827" stroke="#1f2937" stroke-width="1.5" />
+  <text x="65" y="65" fill="#f8fafc" font-size="20" font-weight="700" letter-spacing="0.5">REVIVE — Autonomous Revenue Recovery Agent Architecture</text>
+  <text x="65" y="85" fill="#94a3b8" font-size="12">Razorpay AI Buildathon 2026 (Track 3: AI Revenue Recovery) • Zero-Trust Deterministic Simulation Boundary</text>
+  <rect x="980" y="47" width="160" height="34" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1" />
+  <text x="1000" y="69" fill="#a5b4fc" font-size="11" font-weight="600">SIMULATED / EVALUATION</text>
+
+  <!-- 1. Synthetic Data Generator (Phase 2) -->
+  <g transform="translate(50, 130)" filter="url(#glow)">
+    <rect x="0" y="0" width="230" height="230" rx="10" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5" />
+    <rect x="15" y="15" width="200" height="26" rx="4" fill="#0f172a" />
+    <text x="25" y="32" fill="#38bdf8" font-size="12" font-weight="700">1. DATA INGESTION (PHASE 2)</text>
+    <text x="15" y="65" fill="#e2e8f0" font-size="12" font-weight="600">Failed Transactions</text>
+    <text x="15" y="82" fill="#64748b" font-size="10">UPI, Card, Netbanking, Wallet</text>
+    <text x="15" y="110" fill="#e2e8f0" font-size="12" font-weight="600">Abandoned Checkouts</text>
+    <text x="15" y="127" fill="#64748b" font-size="10">Drop-offs with item & intent signals</text>
+    <text x="15" y="155" fill="#e2e8f0" font-size="12" font-weight="600">Customer History</text>
+    <text x="15" y="172" fill="#64748b" font-size="10">Tenure, past success rate, risk flags</text>
+    <rect x="15" y="192" width="200" height="24" rx="4" fill="#1e293b" />
+    <text x="22" y="208" fill="#94a3b8" font-size="9.5">🛡️ Isolated Ground Truth Matrix</text>
+  </g>
+
+  <!-- Connector 1 -> 2 -->
+  <path d="M 280 245 L 320 245" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- 2. REVIVE Intelligence Layer (Phase 4) -->
+  <g transform="translate(320, 130)" filter="url(#glow)">
+    <rect x="0" y="0" width="260" height="230" rx="10" fill="url(#cardGrad)" stroke="#3b82f6" stroke-width="1.5" />
+    <rect x="15" y="15" width="230" height="26" rx="4" fill="#1e3a8a" />
+    <text x="25" y="32" fill="#60a5fa" font-size="12" font-weight="700">2. REVIVE INTELLIGENCE (PHASE 4)</text>
+    
+    <text x="15" y="65" fill="#f8fafc" font-size="12" font-weight="600">Contextual Diagnosis</text>
+    <text x="15" y="80" fill="#94a3b8" font-size="10">Root cause taxonomy + Confidence (P004)</text>
+
+    <text x="15" y="110" fill="#f8fafc" font-size="12" font-weight="600">Recoverability Scoring</text>
+    <text x="15" y="125" fill="#94a3b8" font-size="10">Calibrated success probability P_rec ∈ [0, 1]</text>
+
+    <text x="15" y="155" fill="#f8fafc" font-size="12" font-weight="600">Net Expected Value (EV) Optimizer</text>
+    <text x="15" y="170" fill="#94a3b8" font-size="10">EV = P · Amount - Cost - Friction</text>
+
+    <rect x="15" y="190" width="230" height="26" rx="4" fill="#1e293b" />
+    <text x="22" y="207" fill="#38bdf8" font-size="10" font-weight="600">Output: Recommendation (Action, EV)</text>
+  </g>
+
+  <!-- Connector 2 -> 3 -->
+  <path d="M 580 245 L 620 245" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- 3. Zero-Trust Policy & Safety Engine (Phase 5) -->
+  <g transform="translate(620, 130)" filter="url(#glow)">
+    <rect x="0" y="0" width="270" height="230" rx="10" fill="url(#policyGrad)" stroke="#f43f5e" stroke-width="1.5" />
+    <rect x="15" y="15" width="240" height="26" rx="4" fill="#4c0519" />
+    <text x="25" y="32" fill="#fda4af" font-size="12" font-weight="700">3. ZERO-TRUST POLICY (PHASE 5)</text>
+
+    <text x="15" y="65" fill="#fff" font-size="11" font-weight="600">P002: Double Recovery Guard (Captured?)</text>
+    <text x="15" y="85" fill="#fff" font-size="11" font-weight="600">P003: Max Attempt Cap (&lt; 2 attempts)</text>
+    <text x="15" y="105" fill="#fff" font-size="11" font-weight="600">P004: Diagnostic Confidence Gate (≥ 85%)</text>
+    <text x="15" y="125" fill="#fff" font-size="11" font-weight="600">P005: High-Risk Fraud Gate (0 leaks)</text>
+    <text x="15" y="145" fill="#fff" font-size="11" font-weight="600">P007: Customer Fatigue Limits (Max 2)</text>
+    <text x="15" y="165" fill="#fff" font-size="11" font-weight="600">P008: Cooldown Timer Guard (300s)</text>
+
+    <rect x="15" y="188" width="240" height="28" rx="4" fill="#881337" />
+    <text x="22" y="206" fill="#ffe4e6" font-size="10" font-weight="700">P010: ExecutionAuthorization Token</text>
+  </g>
+
+  <!-- Branch from Policy: DENY / HUMAN REVIEW -->
+  <path d="M 755 360 L 755 420" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrowRed)" />
+  <g transform="translate(620, 425)" filter="url(#glow)">
+    <rect x="0" y="0" width="270" height="85" rx="8" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" />
+    <text x="15" y="25" fill="#a5b4fc" font-size="12" font-weight="700">POLICY ESCALATIONS &amp; BLOCKS</text>
+    <text x="15" y="45" fill="#e2e8f0" font-size="11">• Human Review Queue (P004 / High Value)</text>
+    <text x="15" y="65" fill="#ef4444" font-size="11">• Execution Blocked (P002 / P003 / P005 / P007)</text>
+  </g>
+
+  <!-- Connector 3 -> 4 (ALLOW Path) -->
+  <path d="M 890 245 L 930 245" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)" />
+
+  <!-- 4. Controlled Execution Simulator (Phase 6) -->
+  <g transform="translate(930, 130)" filter="url(#glow)">
+    <rect x="0" y="0" width="230" height="230" rx="10" fill="url(#execGrad)" stroke="#10b981" stroke-width="1.5" />
+    <rect x="15" y="15" width="200" height="26" rx="4" fill="#064e3b" />
+    <text x="25" y="32" fill="#6ee7b7" font-size="12" font-weight="700">4. CONTROLLED EXECUTOR (P6)</text>
+
+    <text x="15" y="65" fill="#f8fafc" font-size="12" font-weight="600">Authorization Verification</text>
+    <text x="15" y="80" fill="#a7f3d0" font-size="10">Validates P010 token &amp; signature</text>
+
+    <text x="15" y="105" fill="#f8fafc" font-size="12" font-weight="600">SHA-256 Idempotency</text>
+    <text x="15" y="120" fill="#a7f3d0" font-size="10">Double-click &amp; replay protection</text>
+
+    <text x="15" y="145" fill="#f8fafc" font-size="12" font-weight="600">Simulated Action Dispatch</text>
+    <text x="15" y="160" fill="#a7f3d0" font-size="10">Retry, Reminder, Payment Link</text>
+
+    <rect x="15" y="190" width="200" height="26" rx="4" fill="#022c22" />
+    <text x="22" y="207" fill="#34d399" font-size="10" font-weight="600">Records Simulated Outcome</text>
+  </g>
+
+  <!-- Flow to Audit & Evaluation & UI (Bottom Half) -->
+  <path d="M 1045 360 L 1045 540 L 930 540" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
+  <path d="M 755 510 L 755 540 L 620 540" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
+
+  <!-- 5. Audit Trail & Logging (Phases 6 & 9) -->
+  <g transform="translate(670, 560)" filter="url(#glow)">
+    <rect x="0" y="0" width="490" height="120" rx="10" fill="url(#cardGrad)" stroke="#475569" stroke-width="1.5" />
+    <text x="20" y="30" fill="#f1f5f9" font-size="13" font-weight="700">5. IMMUTABLE AUDIT TRAIL &amp; OBSERVABILITY (PHASE 9)</text>
+    <text x="20" y="55" fill="#94a3b8" font-size="11">• Newline-delimited structured JSON logging with automated [REDACTED] credential sanitizer</text>
+    <text x="20" y="75" fill="#94a3b8" font-size="11">• Full trace provenance: Correlation ID (X-Correlation-ID) propagated across client and server</text>
+    <text x="20" y="95" fill="#94a3b8" font-size="11">• Chronological event stream: REQUESTED → AUTHORIZATION_VALIDATED → EXECUTED → OUTCOME</text>
+  </g>
+
+  <!-- 6. Statistical Benchmark & Evaluation (Phase 7) -->
+  <g transform="translate(50, 560)" filter="url(#glow)">
+    <rect x="0" y="0" width="580" height="120" rx="10" fill="url(#cardGrad)" stroke="#8b5cf6" stroke-width="1.5" />
+    <text x="20" y="30" fill="#c4b5fd" font-size="13" font-weight="700">6. HOLDOUT BENCHMARK &amp; EVALUATION (PHASE 7)</text>
+    <text x="20" y="55" fill="#94a3b8" font-size="11">• 50,000 Holdout Transactions (Seeds 101–505) across NO_ACTION, NAIVE_RETRY, RULE_BASED, REVIVE</text>
+    <text x="20" y="75" fill="#94a3b8" font-size="11">• Incremental Revenue (ΔR): INR 2,655,515.22 (95% CI: [INR 2.52M, INR 2.78M])</text>
+    <text x="20" y="95" fill="#94a3b8" font-size="11">• Strict Accounting Verification: RevenueAtRisk = RecoveredRevenue + UnrecoveredRevenue</text>
+  </g>
+
+  <!-- 7. Interactive Control Center UI (Phase 8) -->
+  <g transform="translate(50, 710)" filter="url(#glow)">
+    <rect x="0" y="0" width="1110" height="90" rx="10" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" />
+    <text x="25" y="35" fill="#ffffff" font-size="14" font-weight="700">7. INTERACTIVE CONTROL CENTER WEB APPLICATION (PHASE 8)</text>
+    <text x="25" y="60" fill="#c7d2fe" font-size="12">Live Fast-API Server &amp; Single-Page Application (http://localhost:8000) • Real-time KPI Dashboards • Case Modal Drilldowns • Re-validating Execution</text>
+  </g>
+</svg>
