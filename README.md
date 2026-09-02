@@ -2,7 +2,7 @@
 
 **Track 3: AI Revenue Recovery — Razorpay AI Buildathon 2026**
 
-REVIVE is an autonomous revenue recovery decision and execution system engineered to diagnose payment failures, assess recovery likelihood, select optimal recovery interventions, enforce zero-trust policy governance, and execute controlled synthetic recovery workflows.
+REVIVE is an autonomous revenue recovery decision, governance, and execution system engineered to diagnose payment failures, assess recovery likelihood, select optimal recovery interventions, enforce zero-trust policy governance, and evaluate performance across rigorous unseen holdout benchmarks.
 
 ---
 
@@ -53,23 +53,34 @@ REVIVE is an autonomous revenue recovery decision and execution system engineere
                             │
                             ▼
 ┌────────────────────────────────────────────────────────┐
-│            IMMUTABLE AUDIT TRAIL & TRACE LOG           │
+│        PHASE 7: EXPERIMENTAL HOLDOUT EVALUATION        │
+│  • Unseen Holdout Evaluation (Seeds 101–505)           │
+│  • 95% Bootstrap Confidence Intervals (1,000 samples)  │
+│  • Calibration Analysis (Brier Score / ECE)            │
+│  • Strict Accounting Reconciliation Invariants         │
 └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 2. Why the Safety Boundary Exists
+## 2. Multi-Seed Holdout Benchmark Results (50,000 Transactions)
 
-In automated revenue recovery, optimization models cannot be trusted with unconstrained execution authority. REVIVE enforces the core security invariant:
+Evaluated across 5 independent holdout datasets (10,000 transactions each):
 
-> **Optimization may recommend. Policy may authorize. Execution may act.**
+| Strategy | Mean Recovered Revenue (INR) | Mean Incremental Revenue (INR) | Overall Recovery Rate | Intervention Precision |
+|---|---|---|---|---|
+| **`NO_ACTION`** | INR 71,342.40 | INR 0.00 | 0.9% | N/A |
+| **`NAIVE_RETRY`** | INR 809,172.38 | INR 737,829.97 | 10.9% | 30.8% |
+| **`RULE_BASED`** | INR 3,626,512.01 | INR 3,555,169.60 | 48.6% | 69.5% |
+| **`REVIVE` (Ours)** | **INR 2,726,857.62** | **INR 2,655,515.22** | **36.5%** | **56.0%** |
 
-1. **Zero-Trust Validation**: An action is never executed simply because the scoring engine predicted high revenue.
-2. **Hard Attempt Caps**: Hard limit of maximum 2 automated recovery attempts per payment to prevent infinite retry loops.
-3. **Double-Recovery Prevention**: Payments that became resolved/captured are structurally blocked from execution.
-4. **Customer Fatigue Protection**: Contact caps and 5-minute cooldowns prevent messaging spam.
-5. **Fail-Closed Execution**: If any authorization or state invariant fails, the system safely halts without triggering unverified actions.
+* **95% Bootstrap Confidence Interval for REVIVE Incremental Revenue**: **[INR 2,525,483.92, INR 2,787,014.28]**
+* **Recoverability Brier Score**: **0.2549**
+* **Expected Calibration Error (ECE)**: **25.37%**
+* **Accounting Balance Sheet Reconciliation**: **100% Verified**
+
+> [!NOTE]
+> All results represent controlled synthetic benchmarks for the Razorpay AI Buildathon 2026 prototype evaluation.
 
 ---
 
@@ -86,12 +97,14 @@ REVIVE/
 │   ├── simulator.md
 │   ├── revive-engine.md
 │   ├── policy-engine.md
-│   └── execution-engine.md
-├── evaluation/             # Phase 3: Benchmarks & baseline strategies
-├── execution/              # Phase 6: Controlled executor, orchestrator & CLI
+│   ├── execution-engine.md
+│   └── evaluation.md
+├── evaluation/             # Phase 3 & 7: Benchmarks, strategies & holdout runner
+│   └── experiment/         # Multi-seed holdout engine, bootstrap, calibration
+├── execution/              # Phase 6: Controlled executor, orchestrator & traces
 ├── policy/                 # Phase 5: Policy engine, safety gates & authorizations
 ├── simulator/              # Phase 2: Synthetic payment lifecycle generator
-└── tests/                  # Automated pytest test suites (103/103 passing)
+└── tests/                  # Automated pytest test suites (134/134 passing)
 ```
 
 ---
@@ -103,17 +116,12 @@ REVIVE/
 .\.venv\Scripts\python.exe -m pytest tests/ -v
 ```
 
-### 4.2. Run Comparative Baseline Benchmark
+### 4.2. Run Multi-Seed Holdout Evaluation Benchmark (5 Seeds, 50k Txns)
 ```powershell
-python -m evaluation.compare --dataset data/ --output data/evaluations/
+python -m evaluation.experiment.cli --output experiments/benchmark_5seeds_10k --seeds 101,202,303,404,505 --size 10000 --bootstrap 1000
 ```
 
-### 4.3. Run End-to-End Controlled Execution Simulation
-```powershell
-python -m execution.cli --dataset data/ --output data/execution_analysis/
-```
-
-### 4.4. Inspect End-to-End Lifecycle Trace for a Specific Event
+### 4.3. Inspect End-to-End Lifecycle Trace for a Specific Event
 ```powershell
 python -m execution.cli --dataset data/ --trace-event txn_00002929
 ```

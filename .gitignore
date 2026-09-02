@@ -55,6 +55,9 @@ data/policy_analysis/
 data/execution_analysis/
 !data/.gitkeep
 
+# Experiment Outputs
+experiments/
+
 # Logs & Temporary Artifacts
 logs/
 *.log

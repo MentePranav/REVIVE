@@ -81,14 +81,16 @@ class EvaluationPipeline:
     def __init__(self, cost_config: Optional[ActionCostConfig] = None):
         self.evaluator = OutcomeEvaluator(cost_config)
 
-    def evaluate_strategy(
+    def evaluate_strategy_in_memory(
         self,
         strategy: BaseStrategy,
-        data_dir: Path | str,
+        customers_by_id: Dict[str, Customer],
+        transactions: List[Transaction],
+        checkouts: List[AbandonedCheckout],
+        ground_truth_map: Dict[str, GroundTruthRecord],
         natural_recovery_rev: float = 0.0
     ) -> Tuple[EvaluationMetrics, List[EvaluationOutcomeRecord]]:
-        customers_by_id, transactions, checkouts, ground_truth_map = DatasetLoader.load(data_dir)
-
+        """Evaluates a strategy on in-memory dataset objects in strict chronological order."""
         # 1. Filter eligible failure events (Failed transactions + Abandoned checkouts)
         failed_txns = [t for t in transactions if t.status == PaymentStatus.FAILED]
         all_events: List[Union[Transaction, AbandonedCheckout]] = []
@@ -136,6 +138,22 @@ class EvaluationPipeline:
 
         return metrics, outcome_records
 
+    def evaluate_strategy(
+        self,
+        strategy: BaseStrategy,
+        data_dir: Path | str,
+        natural_recovery_rev: float = 0.0
+    ) -> Tuple[EvaluationMetrics, List[EvaluationOutcomeRecord]]:
+        customers_by_id, transactions, checkouts, ground_truth_map = DatasetLoader.load(data_dir)
+        return self.evaluate_strategy_in_memory(
+            strategy=strategy,
+            customers_by_id=customers_by_id,
+            transactions=transactions,
+            checkouts=checkouts,
+            ground_truth_map=ground_truth_map,
+            natural_recovery_rev=natural_recovery_rev
+        )
+
     def run_benchmark_comparison(
         self,
         strategies: List[BaseStrategy],
@@ -164,18 +182,9 @@ class EvaluationPipeline:
             )
             strategy_metrics_map[strat.name] = metrics
 
-            # Write decision log if output directory is provided
-            if output_dir:
-                out_path = Path(output_dir)
-                out_path.mkdir(parents=True, exist_ok=True)
-                log_file = out_path / f"decisions_{strat.name.lower()}.jsonl"
-                with open(log_file, "w", encoding="utf-8") as f:
-                    for rec in records:
-                        f.write(rec.model_dump_json() + "\n")
-
         comparison = BenchmarkComparison(
-            dataset_path=str(path.resolve()),
             evaluated_at=timestamp_str,
+            dataset_path=str(path.resolve()),
             strategy_metrics=strategy_metrics_map
         )
 
@@ -189,38 +198,8 @@ class EvaluationPipeline:
             csv_file = out_path / "benchmark_comparison.csv"
             with open(csv_file, "w", newline="", encoding="utf-8") as f:
                 writer = csv.writer(f)
-                writer.writerow([
-                    "Strategy",
-                    "Total Transactions",
-                    "Eligible Opportunities",
-                    "Interventions Attempted",
-                    "Successful Recoveries",
-                    "Revenue at Risk (INR)",
-                    "Natural Recovery (INR)",
-                    "Recovered Revenue (INR)",
-                    "Incremental Revenue (INR)",
-                    "Intervention Precision",
-                    "Recoverable Capture Rate",
-                    "False Positive Rate",
-                    "Action Costs (INR)",
-                    "Net Incremental Value (INR)"
-                ])
-                for name, m in comparison.strategy_metrics.items():
-                    writer.writerow([
-                        name,
-                        m.total_transactions_evaluated,
-                        m.total_eligible_opportunities,
-                        m.total_interventions_attempted,
-                        m.successful_recoveries,
-                        m.revenue_at_risk,
-                        m.natural_recovery_revenue,
-                        m.recovered_revenue,
-                        m.incremental_revenue,
-                        m.intervention_precision,
-                        m.recoverable_opportunity_capture_rate,
-                        m.false_positive_rate,
-                        m.total_action_costs,
-                        m.net_incremental_value
-                    ])
+                writer.writerow(["Strategy", "EligibleOps", "AttemptedInterventions", "RecoveredRevenueINR", "IncrementalRevenueINR", "Precision", "CaptureRate", "NetValueINR"])
+                for s_name, m in strategy_metrics_map.items():
+                    writer.writerow([s_name, m.total_eligible_opportunities, m.total_interventions_attempted, m.recovered_revenue, m.incremental_revenue, m.intervention_precision, m.recoverable_opportunity_capture_rate, m.net_incremental_value])
 
         return comparison
