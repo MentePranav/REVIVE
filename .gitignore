@@ -52,6 +52,7 @@ data/simulated/
 data/evaluations/
 data/revive_analysis/
 data/policy_analysis/
+data/execution_analysis/
 !data/.gitkeep
 
 # Logs & Temporary Artifacts

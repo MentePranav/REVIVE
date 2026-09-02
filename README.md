@@ -1,137 +1,119 @@
 ﻿# REVIVE — Autonomous Revenue Recovery Agent
 
-[![Status](https://img.shields.io/badge/Status-Under%20Active%20Development%20(Phase%201)-orange.svg)](#current-development-status)
-[![Track](https://img.shields.io/badge/Track-AI%20Revenue%20Recovery-blue.svg)](#)
-[![Hackathon](https://img.shields.io/badge/Razorpay%20AI%20Buildathon-2026-green.svg)](#)
+**Track 3: AI Revenue Recovery — Razorpay AI Buildathon 2026**
 
-> **REVIVE** is an event-driven agentic system that identifies recoverable failed payments, determines the safest economically optimal recovery action, executes bounded recovery interventions, and measures incremental revenue recovered against strong baselines.
+REVIVE is an autonomous revenue recovery decision and execution system engineered to diagnose payment failures, assess recovery likelihood, select optimal recovery interventions, enforce zero-trust policy governance, and execute controlled synthetic recovery workflows.
 
 ---
 
-## Current Development Status
+## 1. End-to-End Architecture
 
-> [!NOTE]
-> **Under active development — Phase 1: Project Initialization & Architecture**
->
-> The project is currently in **Phase 1**. Core architecture, safety invariants, repository isolation, environment verification, and development roadmaps are established. Functional modules (simulator, agent, policy engine, evaluation engine, frontend dashboard) will be implemented iteratively across subsequent phases.
+```
+┌────────────────────────────────────────────────────────┐
+│             SYNTHETIC TRANSACTION / FAILURE            │
+│  (Observable gateway telemetry + customer history)     │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│      PHASE 4: DIAGNOSIS & RECOVERY SCORING ENGINE      │
+│  • Root-Cause Diagnosis (Confidence ∈ [0.0, 1.0])      │
+│  • Recoverability Probability P(recover) ∈ [0.0, 1.0]  │
+│  • Action Expected Value (EV) Optimization             │
+└───────────────────────────┬────────────────────────────┘
+                            │ ReviveRecommendation
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│       PHASE 5: POLICY, SAFETY & GOVERNANCE ENGINE      │
+│  • Zero-Trust Hierarchy (Rules P001–P010)              │
+│  • Hard 2-Attempt Stopping Rule                        │
+│  • Confidence Gate (≥ 0.85) & High-Risk Gate           │
+│  • Customer Contact Limit & 5-Minute Cooldown          │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼ (ALLOW ONLY)
+┌────────────────────────────────────────────────────────┐
+│           IMMUTABLE ExecutionAuthorization             │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│         PHASE 6: CONTROLLED EXECUTION SIMULATOR        │
+│  • Token Integrity & Live Payment State Validation     │
+│  • Deterministic Idempotency Key (Duplicate Guard)     │
+│  • Simulated Dispatch: RETRY, REMINDER, PAYMENT_LINK   │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│          PHASE 2 SYNTHETIC OUTCOME SIMULATION          │
+│  • Post-execution counterfactual outcome resolution    │
+│  • Zero ground-truth leakage into decision path        │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│            IMMUTABLE AUDIT TRAIL & TRACE LOG           │
+└────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## The Problem
+## 2. Why the Safety Boundary Exists
 
-Payment failures represent a massive source of revenue leakage for digital businesses and subscription merchants:
-- **Indiscriminate Retries**: Traditional payment recovery engines blindly retry failed transactions, causing bank penalties, gateway throttling, and elevated dispute rates.
-- **Customer Fatigue**: Intrusive, repetitive dunning notifications frustrate customers and drive voluntary churn.
-- **Suboptimal Recovery Timing**: Retrying a transaction at the wrong time (e.g. before payday, during banking maintenance windows) wastes limited retry attempts.
-- **Lack of Economic Grounding**: Standard recovery systems do not quantify the expected value ($EV$) of an intervention versus its churn risk and communication cost.
+In automated revenue recovery, optimization models cannot be trusted with unconstrained execution authority. REVIVE enforces the core security invariant:
 
----
+> **Optimization may recommend. Policy may authorize. Execution may act.**
 
-## The REVIVE Solution
-
-REVIVE introduces an intelligent, autonomous recovery loop that balances recovery probability against customer experience and financial risk.
-
-```
-PAYMENT EVENT
-      ↓
-    DETECT
-      ↓
-   DIAGNOSE
-      ↓
-ESTIMATE RECOVERABILITY
-      ↓
-SELECT ACTION
-      ↓
- POLICY GATE (Deterministic Safety Filter)
-      ↓
-   EXECUTE (Bounded Interventions)
-      ↓
-OBSERVE OUTCOME
-      ↓
-STOP / RETRY / ESCALATE
-      ↓
-    AUDIT
-```
-
-### Core Architecture Principle: Separation of Reasoning & Policy
-
-```
-AI Recommendation ──► Deterministic Policy Engine ──► Allowed / Blocked / Escalated ──► Action Executor
-```
-
-The system strictly enforces that **AI reasoning never possesses direct financial execution authority**. Every candidate action proposed by the LLM must pass through deterministic policy gates that enforce hard business rules (cooldowns, retry limits, customer fatigue limits, discount caps).
+1. **Zero-Trust Validation**: An action is never executed simply because the scoring engine predicted high revenue.
+2. **Hard Attempt Caps**: Hard limit of maximum 2 automated recovery attempts per payment to prevent infinite retry loops.
+3. **Double-Recovery Prevention**: Payments that became resolved/captured are structurally blocked from execution.
+4. **Customer Fatigue Protection**: Contact caps and 5-minute cooldowns prevent messaging spam.
+5. **Fail-Closed Execution**: If any authorization or state invariant fails, the system safely halts without triggering unverified actions.
 
 ---
 
-## Repository Structure
+## 3. Project Structure
 
 ```text
 REVIVE/
-│
-├── README.md               # Project overview and status
-├── .gitignore              # Git ignore rules
-├── .env.example            # Environment configuration template
-│
-├── docs/                   # System design and specifications
-│   ├── architecture.md     # Detailed technical architecture specification
-│   └── development-plan.md # 12-phase engineering roadmap
-│
-├── backend/                # FastAPI backend & webhook handlers (Phase 8+)
-├── frontend/               # React + TypeScript dashboard (Phase 9+)
-├── simulator/              # Synthetic transaction & persona simulator (Phase 2)
-├── agent/                  # AI reasoning, diagnosis & execution loop (Phases 4, 6)
-├── policy/                 # Deterministic policy & safety engine (Phase 5)
-├── evaluation/             # Ground-truth benchmarking & baselines (Phases 3, 7)
-├── tests/                  # Unit, integration & adversarial test suites (Phase 11)
-├── scripts/                # Utility and demo scripts (Phase 12)
-└── data/                   # Data directory for simulations and benchmarks
+├── agent/                  # Phase 4: Feature extraction, diagnosis & scoring
+├── config/                 # Simulator & environment configuration
+├── data/                   # Synthetic benchmark datasets
+├── docs/                   # Architectural & technical documentation
+│   ├── architecture.md
+│   ├── baselines.md
+│   ├── simulator.md
+│   ├── revive-engine.md
+│   ├── policy-engine.md
+│   └── execution-engine.md
+├── evaluation/             # Phase 3: Benchmarks & baseline strategies
+├── execution/              # Phase 6: Controlled executor, orchestrator & CLI
+├── policy/                 # Phase 5: Policy engine, safety gates & authorizations
+├── simulator/              # Phase 2: Synthetic payment lifecycle generator
+└── tests/                  # Automated pytest test suites (103/103 passing)
 ```
 
 ---
 
-## Technology Stack
+## 4. Quickstart & CLI Commands
 
-- **Backend & Core Engine**: Python 3.13 + FastAPI
-- **Frontend & Dashboard**: React + TypeScript + Vite
-- **Database**: SQLite (local development / testing) with path to PostgreSQL
-- **AI & Reasoning**: Configurable LLM provider (Gemini / OpenAI API) with structured output validation and deterministic heuristic fallback
-- **Testing**: `pytest` (backend / policy / evaluation) and component test runners
+### 4.1. Run Full Regression Test Suite
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/ -v
+```
 
----
+### 4.2. Run Comparative Baseline Benchmark
+```powershell
+python -m evaluation.compare --dataset data/ --output data/evaluations/
+```
 
-## Phased Development Roadmap
+### 4.3. Run End-to-End Controlled Execution Simulation
+```powershell
+python -m execution.cli --dataset data/ --output data/execution_analysis/
+```
 
-1. **Phase 1: Project Initialization & Architecture** *(Current)*
-2. **Phase 2: Synthetic Data Simulator**
-3. **Phase 3: Naive & Rule-Based Baselines**
-4. **Phase 4: REVIVE Diagnosis & Recovery Scoring**
-5. **Phase 5: Policy & Safety Engine**
-6. **Phase 6: Agent Execution Loop**
-7. **Phase 7: Evaluation & Held-Out Testing**
-8. **Phase 8: Razorpay Test-Mode Integration & Webhooks**
-9. **Phase 9: Frontend Dashboard**
-10. **Phase 10: Audit Explorer & Explainability**
-11. **Phase 11: Testing & Adversarial Evaluation**
-12. **Phase 12: Demo Mode & Final Polish**
-
-Detailed specifications for each phase are documented in [`docs/development-plan.md`](file:///C:/Users/Home/Projects/REVIVE/docs/development-plan.md).
-
----
-
-## Getting Started (Phase 1)
-
-### Prerequisites
-- Python 3.11+
-- Node.js v20+
-- Git
-
-### Initial Setup
-1. Clone or navigate to the repository:
-   ```bash
-   cd C:/Users/Home/Projects/REVIVE
-   ```
-2. Copy configuration template:
-   ```bash
-   cp .env.example .env
-   ```
-3. Follow upcoming phase guides as modules are incrementally implemented.
+### 4.4. Inspect End-to-End Lifecycle Trace for a Specific Event
+```powershell
+python -m execution.cli --dataset data/ --trace-event txn_00002929
+```
