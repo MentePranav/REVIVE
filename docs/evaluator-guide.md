@@ -11,7 +11,7 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** reposito
 2. Launch Server      --> start_revive.bat (or python -m server.cli --port 8000)
 3. Test Demo in UI    --> http://localhost:8000 (Follow docs/demo-runbook.md)
 4. Inspect Evidence   --> experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md
-5. Verify Test Suite  --> pytest tests/ -v (226/226 passing tests)
+5. Verify Test Suite  --> pytest tests/ -v (243/243 passing tests)
 ```
 
 ---
@@ -30,7 +30,7 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** reposito
 2. Navigate to **[http://localhost:8000](http://localhost:8000)**.
 3. Open the **Recovery Cases** tab and click **Inspect** on any case:
    - **Phase 4 Intelligence**: View root-cause diagnosis, confidence score, and Net Expected Value ($EV$) ranking across actions.
-   - **Phase 5 Safety Gate**: Review the 7-item safety checklist and verify that only approved cases receive an `ExecutionAuthorization` token.
+   - **Phase 5 Safety Gate**: Review the 7-item safety checklist and verify that only approved cases receive an `ExecutionAuthorization` record.
    - **Phase 6 Controlled Execution**: Click **Execute Simulated Recovery** and observe state re-validation and outcome recording.
 
 ---
@@ -54,9 +54,9 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** reposito
 ---
 
 ## 5. Step 5 — Run the Full Automated Test Suite (30 Seconds)
-Execute all 226 unit, integration, property, and adversarial tests:
+Execute all 243 unit, integration, property, security, and adversarial tests:
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests/ -v
 ```
-- **Coverage**: 11 simulator tests, 12 baseline tests, 13 intelligence agent tests, 28 policy engine tests, 35 execution tests, 31 holdout experiment tests, 12 server API tests, 8 end-to-end tests, 10 observability tests, 46 red-team adversarial tests, and 20 adversarial hardening tests.
-- **Expected Result**: `226 passed in ~10.8s`.
+- **Coverage**: 11 simulator tests, 12 baseline tests, 13 intelligence agent tests, 28 policy engine tests, 35 execution tests, 31 holdout experiment tests, 12 server API tests, 8 end-to-end tests, 10 observability tests, 46 red-team adversarial tests, 20 adversarial hardening tests, and 17 public security regression tests.
+- **Expected Result**: `243 passed in ~10.8s`.

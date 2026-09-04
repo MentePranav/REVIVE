@@ -22,7 +22,7 @@
 
 ## 2. Actual System Verification Metrics
 
-- **Automated Test Suite**: **226 / 226 Passed** (100% Green in ~10.8s)
+- **Automated Test Suite**: **243 / 243 Passed** (100% Green in ~10.5s)
 - **Holdout Evaluation Dataset**: **50,000 Synthetic Transactions** (5 Holdout Seeds: 101, 202, 303, 404, 505)
 - **Incremental Revenue Yield (ΔR)**: **INR 2,655,515.22** (95% Bootstrap CI: `[INR 2,525,483.92, INR 2,787,014.28]`)
 - **Intervention Precision**: **56.04%** (vs. 30.84% for naive retries)
@@ -41,7 +41,7 @@
    - `simulator/` — Controlled synthetic transaction & lifecycle generator.
    - `evaluation/strategies/` — Deterministic `NO_ACTION`, `NAIVE_RETRY`, `RULE_BASED` baseline implementations.
    - `agent/` — 30+ feature extractor, multi-class diagnostic classifier, and net Expected Value ($EV$) action optimizer (deterministic and interpretable; avoiding external LLM API latencies).
-   - `policy/` — Zero-trust safety engine enforcing rules $P001$–$P010$ with validated authorization token generation.
+   - `policy/` — Zero-trust safety engine enforcing rules $P001$–$P010$ with validated `ExecutionAuthorization` record generation.
    - `execution/` — Controlled execution simulator with SHA-256 idempotency locks and state re-validation.
    - `evaluation/` — Multi-seed statistical holdout evaluator with Brier score calibration and bootstrap analysis.
 2. **Observability & Application**:

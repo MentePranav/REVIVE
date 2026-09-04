@@ -17,7 +17,7 @@
 
 ### Step 2.1: Clone the Repository
 ```bash
-git clone https://github.com/your-username/REVIVE.git
+git clone https://github.com/MentePranav/REVIVE.git
 cd REVIVE
 ```
 
@@ -78,7 +78,7 @@ On the top header and metric cards, observe:
    - **Recoverability Score:** Calibrated probability ($P_{rec}$) and expected value breakdown.
    - **Recommended Action:** (e.g., `PAYMENT_LINK` or `RETRY`).
    - **Policy Evaluation Trace:** Shows all 10 rules ($P001$–$P010$) validated with pass checks.
-   - **Execution Authorization:** Shows the validated ExecutionAuthorization issued only after policy gates pass.
+   - **Execution Authorization:** Shows the validated `ExecutionAuthorization` record issued only after policy gates pass.
 
 ### Step 4.3: Execute a Live Simulated Action
 1. On any case with **Status: `ACTION_AUTHORIZED`**, click the **"Execute Action"** button.
@@ -107,17 +107,17 @@ On the top header and metric cards, observe:
 
 ## 5. Running Automated Tests
 
-Run the full 226-test automated test suite:
+Run the full 243-test automated test suite:
 ```bash
 pytest tests/ -v
 ```
-**Expected Result:** 226 passed in ~9–11 seconds (100% green).
+**Expected Result:** 243 passed in ~9–11 seconds (100% green).
 
 Run the dedicated adversarial red-team penetration suite:
 ```bash
 pytest tests/test_red_team_adversarial.py -v
 ```
-**Expected Result:** 49 passed in ~1 second.
+**Expected Result:** 46 passed in ~1 second.
 
 ---
 

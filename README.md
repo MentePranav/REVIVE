@@ -12,9 +12,45 @@ REVIVE is a simulation-based autonomous revenue recovery decision system for fai
 [![Environment Scope](https://img.shields.io/badge/Environment-Synthetic%20Simulation-purple.svg)]()
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
+---
+
+### 🌐 Live Public Deployment
+
+[![Live Product Demo](https://img.shields.io/badge/Live%20Demo-Product%20Landing%20Page-6366f1?style=for-the-badge&logo=render&logoColor=white)](https://revive-0hpe.onrender.com/)
+[![Interactive Control Center](https://img.shields.io/badge/Control%20Center-Interactive%20App-059669?style=for-the-badge&logo=fastapi&logoColor=white)](https://revive-0hpe.onrender.com/control-center)
+[![OpenAPI Documentation](https://img.shields.io/badge/API%20Docs-OpenAPI%20%2F%20Swagger-0284c7?style=for-the-badge&logo=swagger&logoColor=white)](https://revive-0hpe.onrender.com/docs)
+
+* **Live Product Demo:** [https://revive-0hpe.onrender.com/](https://revive-0hpe.onrender.com/)
+* **Interactive Control Center:** [https://revive-0hpe.onrender.com/control-center](https://revive-0hpe.onrender.com/control-center)
+* **OpenAPI Documentation:** [https://revive-0hpe.onrender.com/docs](https://revive-0hpe.onrender.com/docs)
+
+---
+
+### Key Benchmark Results (50,000 Holdout Transactions)
+
+In a rigorous 50,000-transaction synthetic holdout evaluation across 5 unseen seeds (`101, 202, 303, 404, 505`):
+
+* **Incremental Revenue Recovered:** **₹2,655,515.22** ($\Delta R$ above baseline `NO_ACTION`)
+* **Gross Recovery Yield:** REVIVE recovered **75.19%** of unconstrained `RULE_BASED` gross revenue
+* **Intervention Efficiency:** REVIVE used **22.37% fewer interventions** than `RULE_BASED` (378 fewer interventions per 10k transactions)
+* **Intervention Precision:** **56.04%** (vs. 30.84% for `NAIVE_RETRY`)
+* **High-Risk Leaks:** **0** (100% of suspicious cases routed to Human Review by Policy $P005$)
+* **Reproducibility Fingerprint:** SHA-256 Digest `35b2e65d2efaa521`
+
+> **Honest Benchmark Tradeoff:** `RULE_BASED` achieves higher gross recovery in the synthetic benchmark through more aggressive intervention. REVIVE deliberately trades some gross recovery for fewer interventions and explicit safety governance.
+
 > [!NOTE]
 > **Synthetic Evaluation Environment**
 > **Simulation-only prototype.** No real payments, customer data, or live payment credentials are used. All monetary amounts, transaction histories, and recovery statistics in this repository are synthetic evaluation outputs generated in a controlled benchmark environment.
+
+---
+
+## Technology Stack
+
+* **Backend & API:** Python 3.10+, FastAPI, Uvicorn, Pydantic v2
+* **Frontend:** Vanilla HTML5, CSS3, ES6 JavaScript (Zero frontend build steps or framework dependencies)
+* **Evaluation & Statistics:** Non-parametric Bootstrap Resampling, Brier Score Calibration
+* **Testing & Security:** Pytest, HTTPX, Adversarial Red-Team Suite (243 tests)
 
 ---
 
@@ -85,7 +121,7 @@ REVIVE separates intelligence from execution through an explicit zero-trust poli
               │ (Stop Caps, Risk, Limits) │
               └─────────────┬─────────────┘
                             │
-               [ ExecutionAuthorization Token ]
+               [ ExecutionAuthorization Record ]
                             │
                             ▼
              [ Controlled Execution Simulator ]
@@ -142,7 +178,7 @@ UNTRUSTED INPUT → CONTEXTUAL INTELLIGENCE → POLICY ENGINE → EXECUTION AUTH
 
 The **Controlled Execution Simulator** enforces state-aware safeguards at the point of simulated dispatch:
 
-- **Token Validation**: Re-checks that `ExecutionAuthorization` exists, is valid, matches the target customer/payment ID, and has not expired.
+- **Authorization Record Validation**: Re-checks that `ExecutionAuthorization` exists, is valid, matches the target customer/payment ID, and has not expired.
 - **Live State Re-Validation**: Re-checks live payment status immediately before simulation to ensure no out-of-band capture occurred.
 - **Idempotency Locks**: SHA-256 idempotency cache ensures at most 1 execution per unique authorization key, preventing duplicate actions even under rapid concurrent requests.
 - **Fail-Closed Architecture**: Any internal error, missing authorization, or unhandled exception immediately aborts execution and records an audit event.
