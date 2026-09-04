@@ -1,4 +1,4 @@
-﻿"""
+"""
 Pydantic API schemas for the REVIVE Interactive Control Center.
 """
 
@@ -7,9 +7,9 @@ from pydantic import BaseModel, Field
 
 
 class SimulationRequest(BaseModel):
-    seed: int = Field(default=42, ge=1)
-    size: int = Field(default=100, ge=10, le=10000)
-    scenario: str = Field(default="balanced")
+    seed: int = Field(default=42, ge=0, le=2147483647)
+    size: int = Field(default=100, ge=1, le=10000)
+    scenario: str = Field(default="balanced", max_length=50)
 
 
 class ActionMixStat(BaseModel):

@@ -1,4 +1,4 @@
-﻿"""
+"""
 FastAPI Application for the REVIVE Interactive Revenue Recovery Control Center.
 Serves REST APIs with correlation ID tracing, structured error handling, and SPA frontend.
 """
@@ -26,6 +26,7 @@ from server.models import (
     SimulationRequest,
     SimulationSummaryResponse,
 )
+from server.rate_limiter import RATE_LIMITER, RateLimitMiddleware
 from server.state import ServerStateManager
 
 logger = get_logger("revive.server")
@@ -36,14 +37,19 @@ app = FastAPI(
     description="Interactive control center, decision explainability, and safety audit dashboard for REVIVE."
 )
 
-# Enable CORS for local cross-origin development
+# Configure CORS with safe origin handling
+cors_origins = APP_CONFIG.allowed_origins
+allow_creds = False if cors_origins == ["*"] else True
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=cors_origins,
+    allow_credentials=allow_creds,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Sliding-Window In-Process Rate Limiter
+app.add_middleware(RateLimitMiddleware, enabled=APP_CONFIG.rate_limit_enabled)
 
 
 @app.middleware("http")
@@ -53,6 +59,28 @@ async def correlation_id_middleware(request: Request, call_next):
     request.state.correlation_id = corr_id
     response = await call_next(request)
     response.headers["X-Correlation-ID"] = corr_id
+    return response
+
+
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    """Enforces standard HTTP security response headers."""
+    response = await call_next(request)
+    if APP_CONFIG.security_headers_enabled:
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=(), payment=()"
+        csp = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data:; "
+            "connect-src 'self'; "
+            "frame-ancestors 'self';"
+        )
+        response.headers["Content-Security-Policy"] = csp
     return response
 
 
@@ -92,11 +120,26 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def serve_index():
-    index_file = STATIC_DIR / "index.html"
-    if not index_file.exists():
-        return HTMLResponse("<h1>REVIVE Control Center Frontend Index Not Found</h1>", status_code=404)
-    return FileResponse(index_file)
+async def serve_landing():
+    """Serves the public product landing page."""
+    landing_file = STATIC_DIR / "landing.html"
+    if not landing_file.exists():
+        landing_file = STATIC_DIR / "index.html"
+    if not landing_file.exists():
+        return HTMLResponse("<h1>REVIVE Landing Page Not Found</h1>", status_code=404)
+    return FileResponse(landing_file)
+
+
+@app.get("/control-center", response_class=HTMLResponse)
+@app.get("/demo", response_class=HTMLResponse)
+async def serve_control_center():
+    """Serves the interactive Control Center application."""
+    control_file = STATIC_DIR / "control_center.html"
+    if not control_file.exists():
+        control_file = STATIC_DIR / "index.html"
+    if not control_file.exists():
+        return HTMLResponse("<h1>REVIVE Control Center Not Found</h1>", status_code=404)
+    return FileResponse(control_file)
 
 
 @app.get("/api/health")
@@ -136,17 +179,20 @@ async def reset_demo():
 
 @app.get("/api/recovery-cases", response_model=List[RecoveryCaseListItem])
 async def list_recovery_cases(
-    status: Optional[str] = Query(default=None),
-    action: Optional[str] = Query(default=None),
-    search: Optional[str] = Query(default=None),
-    sort: Optional[str] = Query(default=None)
+    status: Optional[str] = Query(default=None, max_length=50),
+    action: Optional[str] = Query(default=None, max_length=50),
+    search: Optional[str] = Query(default=None, max_length=100),
+    sort: Optional[str] = Query(default=None, max_length=50)
 ):
     return state.get_cases(status_filter=status, action_filter=action, search_query=search, sort_by=sort)
 
 
 @app.get("/api/recovery-cases/{event_id}", response_model=RecoveryCaseDetailResponse)
 async def get_recovery_case(event_id: str, request: Request):
-    detail = state.get_case_detail(event_id)
+    if len(event_id) > 64 or not event_id.strip():
+        corr_id = getattr(request.state, "correlation_id", None)
+        raise ReviveError("Invalid recovery case identifier.", correlation_id=corr_id)
+    detail = state.get_case_detail(event_id.strip())
     if not detail:
         corr_id = getattr(request.state, "correlation_id", None)
         raise ReviveError(f"Recovery case '{event_id}' not found.", correlation_id=corr_id)
@@ -155,8 +201,11 @@ async def get_recovery_case(event_id: str, request: Request):
 
 @app.post("/api/recovery-cases/{event_id}/execute", response_model=ExecuteRecoveryResponse)
 async def execute_recovery_action(event_id: str, request: Request):
+    if len(event_id) > 64 or not event_id.strip():
+        corr_id = getattr(request.state, "correlation_id", None)
+        raise ReviveError("Invalid recovery case identifier.", correlation_id=corr_id)
     corr_id = getattr(request.state, "correlation_id", None)
-    res = state.execute_recovery(event_id, correlation_id=corr_id)
+    res = state.execute_recovery(event_id.strip(), correlation_id=corr_id)
     return res
 
 
@@ -166,7 +215,7 @@ async def get_safety_metrics():
 
 
 @app.get("/api/audit", response_model=List[AuditLogItem])
-async def get_audit_trail(limit: int = Query(default=100, ge=1, le=1000)):
+async def get_audit_trail(limit: int = Query(default=100, ge=1, le=500)):
     return state.get_audit_events(limit=limit)
 
 

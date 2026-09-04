@@ -1,5 +1,5 @@
-﻿# REVIVE — Final Buildathon Status Report
-**Track 3: AI Revenue Recovery | Razorpay AI Buildathon 2026**
+# REVIVE — System Status Report
+**Autonomous Revenue Recovery Decision System**
 
 ---
 
@@ -14,13 +14,15 @@
 - **Phase 7: Experimental Evaluation & Holdout Benchmarking** — **COMPLETE**
 - **Phase 8: Interactive Revenue Recovery Control Center** — **COMPLETE**
 - **Phase 9: Reliability, Observability & Hardening** — **COMPLETE**
-- **Phase 10: Final Differentiation, Evidence Audit & Submission Readiness** — **COMPLETE**
+- **Phase 10: Final Differentiation & Evidence Audit** — **COMPLETE**
+- **Phase 11: Adversarial Red-Team & Security Hardening** — **COMPLETE**
+- **Phase 12: Release Candidate Verification & Benchmark Reconciliation** — **COMPLETE**
 
 ---
 
 ## 2. Actual System Verification Metrics
 
-- **Automated Test Suite**: **177 / 177 Passed** (100% Green in ~9.5s)
+- **Automated Test Suite**: **226 / 226 Passed** (100% Green in ~10.8s)
 - **Holdout Evaluation Dataset**: **50,000 Synthetic Transactions** (5 Holdout Seeds: 101, 202, 303, 404, 505)
 - **Incremental Revenue Yield (ΔR)**: **INR 2,655,515.22** (95% Bootstrap CI: `[INR 2,525,483.92, INR 2,787,014.28]`)
 - **Intervention Precision**: **56.04%** (vs. 30.84% for naive retries)
@@ -37,7 +39,7 @@
 
 1. **Core Engines**:
    - `simulator/` — Controlled synthetic transaction & lifecycle generator.
-   - `baselines/` — Deterministic `NO_ACTION`, `NAIVE_RETRY`, `RULE_BASED` baseline implementations.
+   - `evaluation/strategies/` — Deterministic `NO_ACTION`, `NAIVE_RETRY`, `RULE_BASED` baseline implementations.
    - `agent/` — 30+ feature extractor, multi-class diagnostic classifier, and net Expected Value ($EV$) action optimizer (deterministic and interpretable; avoiding external LLM API latencies).
    - `policy/` — Zero-trust safety engine enforcing rules $P001$–$P010$ with validated authorization token generation.
    - `execution/` — Controlled execution simulator with SHA-256 idempotency locks and state re-validation.
@@ -46,18 +48,17 @@
    - `server/` — FastAPI REST backend with Correlation ID tracing and single-page application dashboard.
    - `core/` — Standardized error taxonomy, structured JSON logging with credential redaction, and environment validator.
 3. **Documentation & Presentation**:
-   - `README.md` — Comprehensive evaluator overview.
-   - `docs/revive-architecture.svg` — Polished visual architecture diagram.
+   - `README.md` — Comprehensive architecture and project overview.
+   - `docs/revive-architecture.svg` — Visual architecture diagram.
    - `docs/pitch-script.md` — 5-minute timed presentation script.
-   - `docs/demo-runbook.md` — Step-by-step evaluator testing guide.
+   - `docs/demo-runbook.md` — Step-by-step testing and demonstration guide.
    - `docs/safety-and-governance.md` — Zero-trust safety specification.
    - `docs/failure-analysis.md` — Assumptions, failure modes, and pre-production validation plan.
    - `docs/evidence-map.md` & `docs/red-team-claim-audit.md` — Requirement and claim audit reports.
 
 ---
 
-## 4. Remaining Manual Submission Tasks (Post-Review by User)
+## 4. Post-Release & Deployment Next Steps (Manual Actions)
 
-1. Record the 5-minute pitch video using the script in `docs/pitch-script.md`.
-2. Push local repository to a public GitHub repository when authorized.
-3. Submit repository URL and video link to the Razorpay AI Buildathon submission portal.
+1. Review and publish the local Git repository to a public GitHub repository when ready.
+2. Run the interactive demonstration locally via `start_revive.bat` or `python -m server.cli`.

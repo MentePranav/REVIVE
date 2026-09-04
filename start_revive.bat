@@ -1,9 +1,9 @@
-﻿@echo off
+@echo off
 setlocal
-title REVIVE — Autonomous Revenue Recovery Control Center
+title REVIVE — Autonomous Revenue Recovery Decision System
 
 echo ================================================================================
-echo       REVIVE — AUTONOMOUS REVENUE RECOVERY (RAZORPAY BUILDATHON 2026)          
+echo       REVIVE — AUTONOMOUS REVENUE RECOVERY DECISION SYSTEM
 echo ================================================================================
 echo.
 

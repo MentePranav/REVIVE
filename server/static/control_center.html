@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REVIVE — Autonomous Revenue Recovery Decision System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Offline Banner -->
+    <div id="offline-banner" class="offline-banner hidden">
+      ⚠️ <strong>Backend Unavailable:</strong> Unable to connect to REVIVE server. Please ensure the server is running and reachable.
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="header">
+      <div class="header-left">
+        <a href="/" class="header-home-link" title="Return to REVIVE Overview & Landing Page">
+          <div class="logo">
+            <span class="logo-badge">REVIVE</span>
+            <span class="logo-sub">Autonomous Revenue Recovery Decision System</span>
+          </div>
+        </a>
+        <div class="env-tag">
+          <span class="pulse-dot"></span>
+          SYNTHETIC EVALUATION ENVIRONMENT
+        </div>
+        <a href="/" class="nav-back-home" title="Return to Product Overview">← Back to REVIVE</a>
+      </div>
+      <div class="header-right">
+        <div class="sim-controls">
+          <button id="btn-reset-demo" class="btn btn-secondary" title="Reset to deterministic golden state">
+            🔄 Reset Demo
+          </button>
+          <span class="sim-controls-label">Batch:</span>
+          <select id="sim-size" class="select-input" title="Select simulation transaction count">
+            <option value="100" selected>100 txns</option>
+            <option value="1000">1,000 txns</option>
+            <option value="10000">10,000 txns</option>
+          </select>
+          <span class="sim-controls-label">Seed:</span>
+          <input type="number" id="sim-seed" value="42" class="num-input" title="Deterministic random seed">
+          <button id="btn-run-sim" class="btn btn-primary" title="Run synthetic simulation batch">
+            <span class="btn-icon">⚡</span> Run Simulation
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-links">
+        <button class="nav-tab active" data-tab="overview">Overview</button>
+        <button class="nav-tab" data-tab="cases">Recovery Cases <span id="cases-count-badge" class="badge">0</span></button>
+        <button class="nav-tab" data-tab="safety">Safety & Governance</button>
+        <button class="nav-tab" data-tab="benchmark">Benchmark</button>
+        <button class="nav-tab" data-tab="audit">Audit Log</button>
+        <button class="nav-tab" data-tab="evaluation">Evaluation (Phase 7)</button>
+      </div>
+      <div class="tagline">
+        <em>"Recover more revenue. Intervene less. Stay in control."</em>
+      </div>
+    </nav>
+
+    <!-- Content Sections -->
+    <main class="main-content">
+      <!-- Loading Overlay -->
+      <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <div id="loading-text" class="loading-text">Processing Recovery Lifecycle...</div>
+      </div>
+
+      <!-- Tab 1: Overview -->
+      <section id="tab-overview" class="tab-panel active">
+        <!-- System Status Command Bar -->
+        <div class="system-status-bar">
+          <div class="status-items-group">
+            <div class="status-entry">
+              <span class="status-entry-label">System Status:</span>
+              <span class="status-entry-val"><span class="pulse-dot"></span> Healthy</span>
+            </div>
+            <div class="status-entry">
+              <span class="status-entry-label">Environment:</span>
+              <span class="status-entry-val text-blue">Synthetic Evaluation</span>
+            </div>
+            <div class="status-entry">
+              <span class="status-entry-label">Governance:</span>
+              <span class="status-entry-val text-yellow">FAIL-CLOSED</span>
+            </div>
+            <div class="status-entry">
+              <span class="status-entry-label">Authority:</span>
+              <span class="status-entry-val text-green">Validated ExecutionAuthorization</span>
+            </div>
+          </div>
+          <div class="status-disclaimer-pill">
+            🛡️ Simulation-only prototype. No real payments or live credentials.
+          </div>
+        </div>
+
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Revenue At Risk</div>
+            <div id="kpi-rev-risk" class="kpi-value">₹0.00</div>
+            <div class="kpi-meta"><span id="kpi-opps">0</span> failed opportunities</div>
+          </div>
+          <div class="kpi-card highlight-green">
+            <div class="kpi-label">Revenue Recovered (REVIVE)</div>
+            <div id="kpi-rev-rec" class="kpi-value">₹0.00</div>
+            <div class="kpi-meta">Synthetic recovery yield</div>
+          </div>
+          <div class="kpi-card highlight-blue">
+            <div class="kpi-label">Incremental Revenue (ΔR)</div>
+            <div id="kpi-rev-inc" class="kpi-value">₹0.00</div>
+            <div class="kpi-meta">vs. NO_ACTION baseline</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Recovery Rate</div>
+            <div id="kpi-rec-rate" class="kpi-value">0.0%</div>
+            <div class="kpi-meta">Intervention precision: <span id="kpi-precision">0.0%</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Interventions Attempted</div>
+            <div id="kpi-actions-exec" class="kpi-value">0</div>
+            <div class="kpi-meta"><span id="kpi-policy-auth">0</span> policy authorized</div>
+          </div>
+          <div class="kpi-card highlight-yellow">
+            <div class="kpi-label">Human Review Queue</div>
+            <div id="kpi-human-rev" class="kpi-value">0</div>
+            <div class="kpi-meta">Confidence / high-risk gates</div>
+          </div>
+          <div class="kpi-card highlight-red">
+            <div class="kpi-label">Safety Blocks</div>
+            <div id="kpi-safety-blocks" class="kpi-value">0</div>
+            <div class="kpi-meta">Prevented by Policy Engine</div>
+          </div>
+        </div>
+
+        <!-- Action Breakdown & Comparison Grid -->
+        <div class="grid-2col">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Action Selection Breakdown</h3>
+              <span class="panel-sub">Why REVIVE doesn't blindly retry everything</span>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Action Type</th>
+                    <th>Recommended</th>
+                    <th>Authorized</th>
+                    <th>Executed</th>
+                    <th>Recovered (₹)</th>
+                    <th>Success Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="action-breakdown-body">
+                  <tr><td colspan="6" class="text-center">No simulation data loaded. Click "Run Simulation" above.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Zero-Trust Safety & Governance Summary</h3>
+              <span class="panel-sub">Execution boundary protection</span>
+            </div>
+            <div class="safety-summary-grid">
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p002">0</span>
+                <span class="safety-desc">Resolved Payment Blocks (P002)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p003">0</span>
+                <span class="safety-desc">Max-Attempt Violations Prevented (P003)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p004">0</span>
+                <span class="safety-desc">Low Confidence Escalations (P004)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p005">0</span>
+                <span class="safety-desc">High-Risk Fraud Automated Blocks (P005)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-p007">0</span>
+                <span class="safety-desc">Contact Fatigue Limit Blocks (P007)</span>
+              </div>
+              <div class="safety-stat">
+                <span class="safety-num" id="stat-dup">0</span>
+                <span class="safety-desc">Duplicate Executions Prevented</span>
+              </div>
+            </div>
+            <div class="panel-footer-note">
+              🛡️ <strong>Zero-Trust Security Invariant:</strong> Intelligence may recommend. Policy may authorize. Execution may act.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Recovery Cases -->
+      <section id="tab-cases" class="tab-panel">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label for="filter-status">Status:</label>
+            <select id="filter-status" class="select-input">
+              <option value="all">All Cases</option>
+              <option value="recovered">Recovered</option>
+              <option value="blocked">Policy Blocked</option>
+              <option value="human_review">Human Review</option>
+              <option value="no_action">No Action</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-action">Action:</label>
+            <select id="filter-action" class="select-input">
+              <option value="all">All Actions</option>
+              <option value="RETRY">RETRY</option>
+              <option value="REMINDER">REMINDER</option>
+              <option value="PAYMENT_LINK">PAYMENT_LINK</option>
+              <option value="DO_NOTHING">DO_NOTHING</option>
+              <option value="HUMAN_REVIEW">HUMAN_REVIEW</option>
+            </select>
+          </div>
+          <div class="filter-group flex-1">
+            <label for="filter-search">Search:</label>
+            <input type="text" id="filter-search" placeholder="Search Event ID, Customer ID, or Failure..." class="text-input">
+          </div>
+          <div class="filter-group">
+            <label for="sort-by">Sort By:</label>
+            <select id="sort-by" class="select-input">
+              <option value="default">Timestamp</option>
+              <option value="amount_desc">Amount (High to Low)</option>
+              <option value="score_desc">Recoverability Score</option>
+              <option value="recovered_desc">Recovered Amount</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-container full-height">
+          <table class="data-table interactive-table">
+            <thead>
+              <tr>
+                <th>Event ID</th>
+                <th>Customer</th>
+                <th>Amount (₹)</th>
+                <th>Diagnosis & Confidence</th>
+                <th>Recoverability</th>
+                <th>Action</th>
+                <th>Policy Decision</th>
+                <th>Execution</th>
+                <th>Outcome</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="cases-table-body">
+              <tr><td colspan="10" class="text-center">Loading recovery cases...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab 3: Safety & Governance -->
+      <section id="tab-safety" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Zero-Trust Policy & Safety Rule Governance</h3>
+            <span class="panel-sub">Strict deterministic rule hierarchy enforced before any execution authorization</span>
+          </div>
+          <div class="rules-hierarchy-list">
+            <div class="rule-card">
+              <div class="rule-code">P001</div>
+              <div class="rule-info">
+                <h4>Input & Schema Validation</h4>
+                <p>Verifies transaction amount > 0, currency format, and observable metadata integrity. Fails closed on malformed input.</p>
+              </div>
+              <div class="rule-type">FAIL CLOSED</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P002</div>
+              <div class="rule-info">
+                <h4>Payment State Resolution Check</h4>
+                <p>Blocks execution if payment is already CAPTURED, SUCCESS, or settled out-of-band to prevent double-recovery charges.</p>
+              </div>
+              <div class="rule-type">DOUBLE-RECOVERY GUARD</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P003</div>
+              <div class="rule-info">
+                <h4>Automated Attempt Cap Safety (Hard Limit: 2 attempts)</h4>
+                <p>Strictly prohibits a 3rd automated recovery attempt on any payment ID to prevent infinite retry loops and fee waste.</p>
+              </div>
+              <div class="rule-type">ATTEMPT CAP</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P004</div>
+              <div class="rule-info">
+                <h4>Diagnostic Confidence Gate (Threshold: >= 0.85)</h4>
+                <p>If root-cause diagnostic certainty &lt; 85%, automated execution is blocked and escalated to Human Review queue.</p>
+              </div>
+              <div class="rule-type">CONFIDENCE GATE</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P005</div>
+              <div class="rule-info">
+                <h4>High-Risk Fraud & Chargeback Gate</h4>
+                <p>Blocks automated interventions on accounts flagged with stolen card or suspicious velocity and routes to Risk Review.</p>
+              </div>
+              <div class="rule-type">RISK GATE</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P006</div>
+              <div class="rule-info">
+                <h4>Action Allowlist Check</h4>
+                <p>Ensures only registered, permitted recovery verbs (RETRY, REMINDER, PAYMENT_LINK, HUMAN_REVIEW, DO_NOTHING) can be processed.</p>
+              </div>
+              <div class="rule-type">ALLOWLIST</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P007</div>
+              <div class="rule-info">
+                <h4>Customer Contact Fatigue Limits (Max 2 contacts)</h4>
+                <p>Limits reminders and payment links to prevent customer communication spam and preserve merchant reputation.</p>
+              </div>
+              <div class="rule-type">FATIGUE GUARD</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P008</div>
+              <div class="rule-info">
+                <h4>Mandatory 300-Second Cooldown Interval</h4>
+                <p>Enforces a 5-minute pause between repeated actions on the same transaction to respect bank clearing queues.</p>
+              </div>
+              <div class="rule-type">COOLDOWN GUARD</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P009</div>
+              <div class="rule-info">
+                <h4>Communication Template Allowlist</h4>
+                <p>Permits only registered, pre-approved notification templates to prevent phishing or script injection.</p>
+              </div>
+              <div class="rule-type">TEMPLATE GUARD</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-code">P010</div>
+              <div class="rule-info">
+                <h4>Validated ExecutionAuthorization Token Issuance</h4>
+                <p>Instantiates an immutable authorization token strictly when all deterministic safety gates pass.</p>
+              </div>
+              <div class="rule-type">AUTHORIZATION</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Benchmark Comparison -->
+      <section id="tab-benchmark" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="benchmark-header-badge">
+                <span>🔬</span>
+                <span>Canonical 50,000-Txn Benchmark (Distinct from Interactive Demo Session)</span>
+              </div>
+              <h3>Comparative Benchmark: REVIVE vs. Baselines</h3>
+              <span class="panel-sub">Rigorous holdout evaluation across 50,000 synthetic transactions (5 Seeds: 101, 202, 303, 404, 505)</span>
+            </div>
+          </div>
+
+          <!-- Primary Architectural Tradeoff Banner -->
+          <div class="tradeoff-banner">
+            <div class="tradeoff-banner-title">
+              <span>⚖️</span>
+              <span>Primary Architectural Tradeoff</span>
+            </div>
+            <div class="tradeoff-banner-statement">
+              "REVIVE recovered 75.19% of RULE_BASED gross revenue while using 22.37% fewer interventions."
+            </div>
+            <div class="tradeoff-banner-expl">
+              REVIVE deliberately trades some gross recovery for fewer interventions and explicit safety governance. Unconstrained <code>RULE_BASED</code> heuristics achieve higher gross recovery through aggressive, repetitive retry attempts without attempt limits, cooldowns, or fraud risk checks. REVIVE enforces hard 2-attempt limits (P003), customer communication fatigue limits (P007), 300s cooldowns (P008), diagnostic confidence boundaries (P004), and blocks all automated actions on high-risk accounts (P005).
+            </div>
+          </div>
+
+          <!-- Benchmark Table -->
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Strategy</th>
+                  <th>Mean Recovered Revenue</th>
+                  <th>Recovery Rate</th>
+                  <th>Interventions (/10k)</th>
+                  <th>Precision</th>
+                  <th>High-Risk Leaks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>NO_ACTION</strong></td>
+                  <td>₹71,342.40</td>
+                  <td>0.93%</td>
+                  <td>0.0</td>
+                  <td>0.0%</td>
+                  <td><span class="text-green font-bold">0</span></td>
+                </tr>
+                <tr>
+                  <td><strong>NAIVE_RETRY</strong></td>
+                  <td>₹809,172.38</td>
+                  <td>10.53%</td>
+                  <td>1,342.4</td>
+                  <td>30.84%</td>
+                  <td><span class="text-red font-bold">18</span></td>
+                </tr>
+                <tr>
+                  <td><strong>RULE_BASED</strong></td>
+                  <td>₹3,626,512.01</td>
+                  <td>47.19%</td>
+                  <td>1,690.0</td>
+                  <td>69.46%</td>
+                  <td><span class="text-red font-bold">29</span></td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>REVIVE (Governed)</strong></td>
+                  <td><strong>₹2,726,857.62</strong></td>
+                  <td><strong>35.48%</strong></td>
+                  <td><strong>1,312.0</strong></td>
+                  <td><strong>56.04%</strong></td>
+                  <td><strong><span class="text-green font-bold">0</span></strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Visual Tradeoff Comparison -->
+          <div class="tradeoff-visual-grid">
+            <div class="visual-chart-card">
+              <div class="visual-chart-title">Gross Revenue Recovered (Mean)</div>
+              <div class="visual-chart-subtitle">Higher indicates greater total synthetic currency captured</div>
+              <div class="chart-meter-list">
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">RULE_BASED</span>
+                    <span class="meter-val">₹3,626,512.01 (100.0%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-rule" style="width: 100%;"></div></div>
+                </div>
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">REVIVE (Governed)</span>
+                    <span class="meter-val">₹2,726,857.62 (75.19%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-revive" style="width: 75.19%;"></div></div>
+                </div>
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">NAIVE_RETRY</span>
+                    <span class="meter-val">₹809,172.38 (22.31%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-naive" style="width: 22.31%;"></div></div>
+                </div>
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">NO_ACTION</span>
+                    <span class="meter-val">₹71,342.40 (1.97%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-noaction" style="width: 1.97%;"></div></div>
+                </div>
+              </div>
+              <div class="chart-caption-note">
+                RULE_BASED achieves peak gross recovery through unconstrained retry volume across all failure modes.
+              </div>
+            </div>
+
+            <div class="visual-chart-card">
+              <div class="visual-chart-title">Interventions Attempted per 10k</div>
+              <div class="visual-chart-subtitle">Lower indicates less customer friction, spam, and retry fatigue</div>
+              <div class="chart-meter-list">
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">RULE_BASED</span>
+                    <span class="meter-val">1,690.0 attempts (100.0%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-rule" style="width: 100%;"></div></div>
+                </div>
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">NAIVE_RETRY</span>
+                    <span class="meter-val">1,342.4 attempts (79.43%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-naive" style="width: 79.43%;"></div></div>
+                </div>
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">REVIVE (Governed)</span>
+                    <span class="meter-val">1,312.0 attempts (77.63%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-revive" style="width: 77.63%;"></div></div>
+                </div>
+                <div class="meter-row">
+                  <div class="meter-header">
+                    <span class="meter-name">NO_ACTION</span>
+                    <span class="meter-val">0.0 attempts (0.0%)</span>
+                  </div>
+                  <div class="meter-track"><div class="meter-fill meter-fill-noaction" style="width: 0%;"></div></div>
+                </div>
+              </div>
+              <div class="chart-caption-note">
+                <strong>Visual Tradeoff:</strong> RULE_BASED → more recovery, more intervention. REVIVE → less recovery, fewer interventions. This is a deliberate tradeoff, not a victory claim.
+              </div>
+            </div>
+          </div>
+
+          <!-- Safety Comparison & High-Risk Leaks -->
+          <div class="safety-leaks-panel">
+            <div class="safety-leaks-header">
+              <div>
+                <div class="safety-leaks-title">🛡️ Safety & Risk Boundary Comparison (High-Risk Leaks)</div>
+                <div class="safety-leaks-sub">High-risk accounts where automated intervention was permitted instead of blocked/escalated</div>
+              </div>
+            </div>
+            <div class="safety-leaks-grid">
+              <div class="leak-card leak-safe">
+                <div class="leak-strat-name">NO_ACTION</div>
+                <div class="leak-count leak-count-zero">0</div>
+                <div class="leak-desc">Zero automated actions</div>
+              </div>
+              <div class="leak-card leak-danger">
+                <div class="leak-strat-name">NAIVE_RETRY</div>
+                <div class="leak-count leak-count-high">18</div>
+                <div class="leak-desc">Blind retries on high-risk accounts</div>
+              </div>
+              <div class="leak-card leak-danger">
+                <div class="leak-strat-name">RULE_BASED</div>
+                <div class="leak-count leak-count-high">29</div>
+                <div class="leak-desc">Heuristic actions on high-risk accounts</div>
+              </div>
+              <div class="leak-card leak-safe">
+                <div class="leak-strat-name">REVIVE (Governed)</div>
+                <div class="leak-count leak-count-zero">0</div>
+                <div class="leak-desc">Policy P005 zero-tolerance hard block</div>
+              </div>
+            </div>
+            <div class="leak-summary-text">
+              In this synthetic benchmark, REVIVE recorded zero high-risk leaks while reducing intervention volume relative to RULE_BASED. <em>(Synthetic benchmark result; does not represent live payment risk guarantees).</em>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 5: Audit Log -->
+      <section id="tab-audit" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Live Immutable Audit Trail</h3>
+            <span class="panel-sub">Every lifecycle step logged chronologically with deterministic trace metadata</span>
+          </div>
+          <div class="table-container full-height">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Audit ID</th>
+                  <th>Timestamp</th>
+                  <th>Event Type</th>
+                  <th>Payment ID</th>
+                  <th>Customer ID</th>
+                  <th>Action</th>
+                  <th>Event Details (JSON)</th>
+                </tr>
+              </thead>
+              <tbody id="audit-table-body">
+                <tr><td colspan="7" class="text-center">No audit events recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 6: Evaluation -->
+      <section id="tab-evaluation" class="tab-panel">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Phase 7 Statistical Holdout Evaluation Summary</h3>
+            <span class="panel-sub">Unseen holdout calibration, Brier score, accounting invariants, and bootstrap confidence intervals (50,000 txns across 5 seeds)</span>
+          </div>
+
+          <!-- Evaluation Metric Cards -->
+          <div class="eval-metrics-grid">
+            <div class="eval-card">
+              <div class="eval-label">Bootstrap 95% CI — REVIVE Incremental Revenue</div>
+              <div class="eval-val text-green">₹2,655,515.22</div>
+              <div class="eval-sub">Across the evaluation bootstrap (1,000 resamples), the 95% interval was <strong>₹2,525,483.92 to ₹2,787,014.28</strong>.</div>
+            </div>
+            <div class="eval-card">
+              <div class="eval-label">Brier Probability Score</div>
+              <div class="eval-val text-blue">0.2549</div>
+              <div class="eval-sub">Measures the quality of probabilistic predictions; lower is better. Evaluates mean squared probability error.</div>
+            </div>
+            <div class="eval-card">
+              <div class="eval-label">Expected Calibration Error (ECE)</div>
+              <div class="eval-val text-yellow">25.37%</div>
+              <div class="eval-sub">Measures calibration error between predicted confidence and observed outcomes across 10 reliability bins; lower is better.</div>
+            </div>
+            <div class="eval-card">
+              <div class="eval-label">Accounting Balance Status</div>
+              <div class="eval-val text-green">100% BALANCED</div>
+              <div class="eval-sub">Checks that revenue accounting reconciles across the pipeline: <code>RevenueAtRisk = RecoveredRevenue + UnrecoveredRevenue</code>.</div>
+            </div>
+          </div>
+
+          <!-- Experiment Methodology & Reproducibility -->
+          <div class="methodology-panel">
+            <div class="methodology-header">
+              <span>⚙️</span>
+              <span>Evaluation Methodology & Reproducibility</span>
+            </div>
+            <div class="methodology-grid">
+              <div class="methodology-item">
+                <div class="methodology-item-label">Dataset Population</div>
+                <div class="methodology-item-val">Synthetic (50,000 Txns)</div>
+              </div>
+              <div class="methodology-item">
+                <div class="methodology-item-label">Failed Opportunities</div>
+                <div class="methodology-item-val">11,064 (2,212.8 / 10k)</div>
+              </div>
+              <div class="methodology-item">
+                <div class="methodology-item-label">Holdout Seeds</div>
+                <div class="methodology-item-val">101, 202, 303, 404, 505</div>
+              </div>
+              <div class="methodology-item">
+                <div class="methodology-item-label">Threshold Tuning</div>
+                <div class="methodology-item-val">Frozen on Seed 42</div>
+              </div>
+            </div>
+            <div class="reproducibility-bar">
+              <div>
+                <strong>Evaluation Artifact Fingerprint:</strong>
+                <span class="reproducibility-fingerprint">SHA-256: 35b2e65d2efaa521</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted);">
+                Run <code>python -m evaluation.experiment.cli --output experiments/</code> to reproduce.
+              </div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
+              <em>The benchmark evaluates a synthetic environment designed to stress recovery decision logic. It is not a production performance claim.</em>
+            </div>
+          </div>
+
+          <!-- Evidence Hierarchy -->
+          <div class="evidence-hierarchy-grid">
+            <div class="evidence-col col-demonstrates">
+              <div class="evidence-col-title">
+                <span>✓</span>
+                <span>What the Benchmark Demonstrates</span>
+              </div>
+              <ul class="evidence-list">
+                <li><span class="bullet">1.</span> Context-aware intervention can recover substantial revenue over passive observation.</li>
+                <li><span class="bullet">2.</span> REVIVE reduces intervention volume relative to unconstrained RULE_BASED recovery.</li>
+                <li><span class="bullet">3.</span> REVIVE's policy layer can block high-risk automated interventions and escalate uncertain cases.</li>
+                <li><span class="bullet">4.</span> Recovery performance involves an explicit revenue/intervention tradeoff.</li>
+                <li><span class="bullet">5.</span> The evaluation is reproducible from synthetic data and fixed seeds.</li>
+              </ul>
+            </div>
+
+            <div class="evidence-col col-not-demonstrates">
+              <div class="evidence-col-title">
+                <span>✕</span>
+                <span>What it Does NOT Demonstrate</span>
+              </div>
+              <ul class="evidence-list">
+                <li><span class="bullet">1.</span> Production payment performance on live payment gateways.</li>
+                <li><span class="bullet">2.</span> Real customer behavioral dynamics or psychographic responses.</li>
+                <li><span class="bullet">3.</span> Real-world chargeback prevention or bank-level dispute guarantees.</li>
+                <li><span class="bullet">4.</span> Guaranteed recovery rates for any specific merchant.</li>
+                <li><span class="bullet">5.</span> Guaranteed safety in live banking environments.</li>
+                <li><span class="bullet">6.</span> Production-scale throughput or distributed network reliability.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Documentation & Evidence Source Links -->
+          <div class="artifact-links-panel">
+            <div class="artifact-links-title">Repository Documentation & Benchmark Artifacts</div>
+            <div class="artifact-links-flex">
+              <a href="https://github.com/MentePranav/REVIVE/blob/master/docs/final-benchmark-audit.md" target="_blank" rel="noopener noreferrer" class="artifact-link-item">
+                <span>📄</span> docs/final-benchmark-audit.md ↗
+              </a>
+              <a href="https://github.com/MentePranav/REVIVE/blob/master/docs/evaluation.md" target="_blank" rel="noopener noreferrer" class="artifact-link-item">
+                <span>📄</span> docs/evaluation.md ↗
+              </a>
+              <a href="https://github.com/MentePranav/REVIVE/blob/master/docs/architecture.md" target="_blank" rel="noopener noreferrer" class="artifact-link-item">
+                <span>📄</span> docs/architecture.md ↗
+              </a>
+              <a href="https://github.com/MentePranav/REVIVE/blob/master/docs/evaluator-guide.md" target="_blank" rel="noopener noreferrer" class="artifact-link-item">
+                <span>📄</span> docs/evaluator-guide.md ↗
+              </a>
+              <a href="https://github.com/MentePranav/REVIVE/blob/master/experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md" target="_blank" rel="noopener noreferrer" class="artifact-link-item">
+                <span>📊</span> experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md ↗
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: Recovery Case Detail Drilldown -->
+    <div id="case-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div>
+            <h2 id="modal-title">Recovery Case: txn_00000000</h2>
+            <div class="modal-sub">Payment ID: <code class="code-tag" id="modal-pay-id">pay_000</code> | Customer: <code class="code-tag" id="modal-cust-id">cust_000</code></div>
+          </div>
+          <button id="modal-close-btn" class="close-btn" aria-label="Close dialog">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Decision Chain Visual Flow -->
+          <div class="modal-decision-chain">
+            <span class="chain-step active">1. Failure</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-step active">2. Diagnosis</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-step active">3. Recommendation</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-step active">4. Policy Gate</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-step active">5. Authorization</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-step">6. Execution</span>
+            <span class="chain-arrow">→</span>
+            <span class="chain-step">7. Outcome</span>
+          </div>
+
+          <!-- Security Callout Banner -->
+          <div class="modal-security-banner">
+            <span>🛡️</span>
+            <span><strong>Decision Boundary Invariant:</strong> Recommendations do not directly execute. Automated execution requires a validated <code>ExecutionAuthorization</code> issued only after policy and safety gates pass.</span>
+          </div>
+
+          <!-- Two-column drilldown -->
+          <div class="modal-grid">
+            <!-- Left Column: Intelligence -->
+            <div class="modal-col">
+              <div class="card-section">
+                <h3>1. Contextual Diagnosis (Phase 4)</h3>
+                <div class="diag-banner">
+                  <div class="diag-title" id="modal-diag-cat">TRANSIENT</div>
+                  <div class="diag-conf">Confidence: <strong id="modal-diag-conf">94.0%</strong></div>
+                </div>
+                <p id="modal-diag-expl" class="diag-desc">Failure description</p>
+                <div class="stat-pill-row">
+                  <span class="pill">Risk Signal: <strong id="modal-risk-sig">LOW</strong></span>
+                  <span class="pill">Amount: <strong id="modal-amount">₹0.00</strong></span>
+                  <span class="pill">Method: <strong id="modal-method">UPI</strong></span>
+                </div>
+              </div>
+
+              <div class="card-section">
+                <h3>2. Recoverability & Action Expected Value</h3>
+                <div class="rec-score-box">
+                  <div class="rec-score-val" id="modal-rec-score">82.5%</div>
+                  <div class="rec-score-meta">Recoverability Tier: <span id="modal-rec-tier" class="badge">HIGH</span></div>
+                </div>
+                <h4>Action Expected Value (EV) Ranking:</h4>
+                <div id="modal-action-scores" class="action-scores-list">
+                  <!-- Dynamic EV Bars -->
+                </div>
+                <h4>Explainability Factors:</h4>
+                <ul id="modal-top-factors" class="factors-list">
+                  <!-- Dynamic factors -->
+                </ul>
+              </div>
+            </div>
+
+            <!-- Right Column: Governance & Execution -->
+            <div class="modal-col">
+              <div class="card-section">
+                <h3>3. Safety Gate Checklist (Phase 5)</h3>
+                <div id="modal-policy-badge" class="policy-decision-banner ALLOW">
+                  DECISION: ALLOW (P010_ACTION_APPROVED)
+                </div>
+                <p id="modal-policy-reason" class="policy-reason-text">Policy reason</p>
+
+                <div id="modal-safety-checklist" class="checklist-items">
+                  <!-- Dynamic Checklist -->
+                </div>
+
+                <div class="auth-box">
+                  <div class="auth-label">Execution Authorization ID:</div>
+                  <div id="modal-auth-id" class="auth-token">auth_none</div>
+                </div>
+              </div>
+
+              <div class="card-section">
+                <h3>4. Controlled Execution & Outcome (Phase 6)</h3>
+                <div class="exec-info-grid">
+                  <div>Status: <strong id="modal-exec-status">PENDING</strong></div>
+                  <div>Outcome: <strong id="modal-outcome">NOT_APPLICABLE</strong></div>
+                  <div>Recovered: <strong id="modal-rec-amount" class="text-green">₹0.00</strong></div>
+                  <div>Ref: <strong id="modal-ext-ref">sim_none</strong></div>
+                </div>
+
+                <div class="exec-btn-wrapper">
+                  <button id="modal-btn-execute" class="btn btn-success btn-large">
+                    ⚡ Execute Simulated Recovery
+                  </button>
+                  <p class="sim-note">Executes strictly through Phase 6 Controlled Executor with state re-validation.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-﻿# REVIVE — Interactive Revenue Recovery Control Center & Demo Application
+# REVIVE — Interactive Revenue Recovery Control Center & Demo Application
 
 ## 1. Overview & Purpose
 
@@ -7,7 +7,7 @@ The **REVIVE Interactive Control Center** is a high-density, evaluator-facing we
 $$\text{Revenue at Risk} \longrightarrow \text{Diagnosis} \longrightarrow \text{Scoring} \longrightarrow \text{Policy Safety Gate} \longrightarrow \text{Authorized Execution} \longrightarrow \text{Outcome Measurement}$$
 
 > [!IMPORTANT]
-> **Synthetic Simulation Notice**: All financial metrics, customer histories, and recovery outcomes shown in the Control Center represent controlled synthetic benchmarks for the Razorpay AI Buildathon 2026.
+> **Synthetic Simulation Notice**: All financial metrics, customer histories, and recovery outcomes shown in the Control Center represent controlled synthetic benchmarks in a simulation-only prototype.
 
 ---
 

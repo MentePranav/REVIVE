@@ -1,4 +1,4 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="100%" height="100%" style="background:#0b0f19; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="100%" height="100%" style="background:#0b0f19; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <defs>
     <!-- Gradients -->
     <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -40,8 +40,8 @@
 
   <!-- Title & Header -->
   <rect x="40" y="30" width="1120" height="70" rx="12" fill="#111827" stroke="#1f2937" stroke-width="1.5" />
-  <text x="65" y="65" fill="#f8fafc" font-size="20" font-weight="700" letter-spacing="0.5">REVIVE — Autonomous Revenue Recovery Agent Architecture</text>
-  <text x="65" y="85" fill="#94a3b8" font-size="12">Razorpay AI Buildathon 2026 (Track 3: AI Revenue Recovery) • Zero-Trust Deterministic Simulation Boundary</text>
+  <text x="65" y="65" fill="#f8fafc" font-size="20" font-weight="700" letter-spacing="0.5">REVIVE — Autonomous Revenue Recovery Decision System Architecture</text>
+  <text x="65" y="85" fill="#94a3b8" font-size="12">Autonomous Revenue Recovery Decision System • Zero-Trust Deterministic Simulation Boundary</text>
   <rect x="980" y="47" width="160" height="34" rx="6" fill="#1e1b4b" stroke="#4f46e5" stroke-width="1" />
   <text x="1000" y="69" fill="#a5b4fc" font-size="11" font-weight="600">SIMULATED / EVALUATION</text>
 

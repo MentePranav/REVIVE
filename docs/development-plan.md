@@ -1,6 +1,6 @@
-﻿# REVIVE — Phased Development Plan
+# REVIVE — Phased Development Plan
 
-This document outlines the phased engineering roadmap for **REVIVE (Autonomous Revenue Recovery Agent)** for the Razorpay AI Buildathon 2026.
+This document outlines the phased engineering roadmap for **REVIVE (Autonomous Revenue Recovery Decision System)**.
 
 ---
 
@@ -166,4 +166,4 @@ This document outlines the phased engineering roadmap for **REVIVE (Autonomous R
   - Final documentation review, code cleanup, and presentation assets.
 - **Tests**:
   - End-to-end demo walkthrough verification from fresh repository clone.
-- **Completion Criteria**: Flawless, reproducible demo experience ready for hackathon submission.
+- **Completion Criteria**: Flawless, reproducible demo experience ready for demonstration and independent evaluation.

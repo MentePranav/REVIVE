@@ -1,6 +1,6 @@
-﻿# REVIVE — Buildathon Presentation & Evaluator Demo Checklist
+# REVIVE — Presentation & Demo Checklist
 
-This document provides the exact step-by-step procedure for demonstrating REVIVE to evaluators and hackathon judges.
+This document provides the step-by-step procedure for demonstrating REVIVE.
 
 ---
 
@@ -9,7 +9,7 @@ This document provides the exact step-by-step procedure for demonstrating REVIVE
 1. **Verify Local Environment**:
    ```powershell
    .\.venv\Scripts\python.exe -m pytest tests/ -q
-   # Expected: 177 passed in ~9.5s
+   # Expected: 226 passed in ~10.8s
    ```
 2. **Launch Application**:
    Double click `start_revive.bat` or run:

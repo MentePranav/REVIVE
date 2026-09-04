@@ -1,6 +1,6 @@
-﻿# REVIVE — Buildathon Track 3 Evidence & Requirement Map
+# REVIVE — System Requirement & Evidence Verification Matrix
 
-This document establishes the empirical mapping between Track 3 (AI Revenue Recovery) requirements and the REVIVE implementation.
+This document establishes the empirical mapping between core system requirements and the REVIVE implementation.
 
 ---
 

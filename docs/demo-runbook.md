@@ -1,7 +1,7 @@
-﻿# REVIVE — Evaluator Demo Runbook & Step-by-Step Guide
+# REVIVE — Interactive Demo Runbook & Step-by-Step Guide
 
-**Target Evaluation Time:** ~5 Minutes  
-**Track:** Track 3: AI Revenue Recovery — Razorpay AI Buildathon 2026  
+**Target Demonstration Time:** ~5 Minutes
+**Scope:** Governed Autonomous Revenue Recovery Lifecycle Demonstration
 **Environment:** 100% Local & Self-Contained (Zero External Network Dependencies)
 
 ---

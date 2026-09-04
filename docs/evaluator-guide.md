@@ -1,6 +1,6 @@
-﻿# REVIVE — Buildathon Evaluator Quick-Start Guide
+# REVIVE — Project Evaluation & Quick-Start Guide
 
-Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** repository. This concise guide directs evaluators to the most important technical evidence and demonstrations in the repository.
+Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** repository. This concise guide directs evaluators and reviewers to the most important technical evidence and demonstrations in the repository.
 
 ---
 
@@ -11,14 +11,14 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** reposito
 2. Launch Server      --> start_revive.bat (or python -m server.cli --port 8000)
 3. Test Demo in UI    --> http://localhost:8000 (Follow docs/demo-runbook.md)
 4. Inspect Evidence   --> experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md
-5. Verify Test Suite  --> pytest tests/ -v (177/177 passing tests)
+5. Verify Test Suite  --> pytest tests/ -v (226/226 passing tests)
 ```
 
 ---
 
 ## 1. Step 1 — Review Architecture & Core Concept (1 Minute)
-- **[README.md](file:///C:/Users/Home/Projects/REVIVE/README.md)**: Explains the Track 3 problem (blind retries vs. context-aware recovery) and core thesis.
-- **[docs/revive-architecture.svg](file:///C:/Users/Home/Projects/REVIVE/docs/revive-architecture.svg)**: Visualizes the physical separation between AI intelligence and Zero-Trust Policy authorization.
+- **[`README.md`](../README.md)**: Explains the payment failure recovery problem (blind retries vs. context-aware recovery) and core thesis.
+- **[`docs/revive-architecture.svg`](revive-architecture.svg)**: Visualizes the physical separation between contextual intelligence and Zero-Trust Policy authorization.
 
 ---
 
@@ -37,7 +37,7 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** reposito
 
 ## 3. Step 3 — Inspect Statistical Holdout Benchmark Evidence (1 Minute)
 - Navigate to the **Benchmark** tab in the web interface or open:
-  **[experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md](file:///C:/Users/Home/Projects/REVIVE/experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md)**
+  **[`experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md`](../experiments/benchmark_5seeds_10k/BENCHMARK_REPORT.md)**
 - Review the 4-way comparative evaluation across **50,000 synthetic holdout transactions**:
   - `NO_ACTION`: INR 71,342.40 (0.94% organic recovery)
   - `NAIVE_RETRY`: INR 809,172.38 (30.84% precision; 69.16% friction)
@@ -54,9 +54,9 @@ Welcome to the **REVIVE (Autonomous Revenue Recovery Decision System)** reposito
 ---
 
 ## 5. Step 5 — Run the Full Automated Test Suite (30 Seconds)
-Execute all 177 unit, integration, property, and adversarial tests:
+Execute all 226 unit, integration, property, and adversarial tests:
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests/ -v
 ```
-- **Coverage**: 11 simulator tests, 17 baseline tests, 26 intelligence agent tests, 22 policy engine tests, 35 execution tests, 26 holdout experiment tests, 12 server API tests, 8 end-to-end tests, 10 observability tests, and 20 adversarial edge case tests.
-- **Expected Result**: `177 passed in ~9.5s`.
+- **Coverage**: 11 simulator tests, 12 baseline tests, 13 intelligence agent tests, 28 policy engine tests, 35 execution tests, 31 holdout experiment tests, 12 server API tests, 8 end-to-end tests, 10 observability tests, 46 red-team adversarial tests, and 20 adversarial hardening tests.
+- **Expected Result**: `226 passed in ~10.8s`.

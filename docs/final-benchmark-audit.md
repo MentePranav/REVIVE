@@ -1,4 +1,4 @@
-﻿# REVIVE — Final Benchmark Audit & Scientific Holdout Evaluation Report
+# REVIVE — Final Benchmark Audit & Scientific Holdout Evaluation Report
 
 **Evaluation Artifact Source:** `experiments/benchmark_5seeds_10k/`
 **Dataset Population:** 50,000 Synthetic Transactions (5 Holdout Seeds: 101, 202, 303, 404, 505)
@@ -66,7 +66,7 @@ Across the 50,000 transaction holdout evaluation:
 REVIVE demonstrates that an autonomous system can capture substantial incremental revenue while respecting operational constraints, merchant risk boundaries, and cardholder communication limits.
 
 ### Synthetic Limitations
-Probabilities and counterfactual recovery outcomes reflect synthetic distributions calibrated for the buildathon simulator.
+Probabilities and counterfactual recovery outcomes reflect synthetic distributions calibrated for the simulation environment.
 
 ### Production Unknowns
 - Real-world customer response latencies to payment links.

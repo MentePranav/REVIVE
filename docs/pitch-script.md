@@ -1,5 +1,5 @@
-﻿# REVIVE — 5-Minute Evaluator Pitch Script
-**Track 3: AI Revenue Recovery | Razorpay AI Buildathon 2026**
+# REVIVE — 5-Minute Technical Presentation Pitch Script
+**Autonomous Revenue Recovery Decision System**
 
 ---
 
@@ -17,7 +17,7 @@
 ## Pitch Transcript
 
 ### [0:00 - 0:30] HOOK
-*"Judges, a failed payment is not necessarily lost revenue. But in modern commerce, the real challenge isn't hitting retry—the challenge is knowing **which** failures are genuinely recoverable, **what** intervention is economically profitable, and **when automated software must stop**.*
+*"A failed payment is not necessarily lost revenue. But in modern commerce, the real challenge isn't hitting retry—the challenge is knowing **which** failures are genuinely recoverable, **what** intervention is economically profitable, and **when automated software must stop**.*
 
 *Every single day, merchants lose revenue to payment friction while spamming customers with redundant reminders and risking disputes on compromised accounts.*
 

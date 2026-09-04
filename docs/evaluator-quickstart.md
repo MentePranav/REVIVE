@@ -1,7 +1,7 @@
-﻿# REVIVE — Evaluator Quickstart Guide
+# REVIVE — Quickstart Guide
 
-**Target Evaluation Time:** 3–5 Minutes  
-**Track:** Track 3: AI Revenue Recovery — Razorpay AI Buildathon 2026  
+**Target Setup Time:** 3–5 Minutes
+**Scope:** Local Execution & Demonstration Quickstart
 **Environment:** 100% Local & Self-Contained (Zero API Keys or Cloud Credentials Required)
 
 ---

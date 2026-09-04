@@ -1,12 +1,12 @@
-﻿# REVIVE — System Architecture Specification
+# REVIVE — System Architecture Specification
 
 ## 1. Executive Overview
 
-**REVIVE** is an event-driven autonomous revenue recovery agent designed for the Razorpay AI Buildathon 2026 (AI Revenue Recovery Track).
+**REVIVE** is an event-driven autonomous revenue recovery decision system designed for intelligent failed-payment recovery and risk-governed interventions.
 
 Modern digital businesses face significant revenue leakage from failed recurring and one-time payment transactions (card declines, network timeouts, insufficient funds, expired instruments, mandate failures). Traditional payment recovery mechanisms rely on naive indiscriminate retries or static heuristic rules, which lead to high customer friction, payment processor penalties, customer fatigue, and suboptimal recovery yields.
 
-REVIVE solves this by separating **probabilistic AI reasoning** from **deterministic financial risk policies** to deliver bounded, explainable, and provably incremental revenue recovery.
+REVIVE solves this by separating **contextual decision intelligence** from **deterministic financial risk policies** to deliver bounded, explainable, and provably incremental revenue recovery.
 
 ---
 
@@ -14,7 +14,7 @@ REVIVE solves this by separating **probabilistic AI reasoning** from **determini
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           AI REASONING LAYER                            │
+│                    CONTEXTUAL INTELLIGENCE LAYER                        │
 │  • Diagnoses error code & failure context                               │
 │  • Evaluates customer history & merchant profile                        │
 │  • Formulates candidate recovery strategy & timing                      │
@@ -28,12 +28,12 @@ REVIVE solves this by separating **probabilistic AI reasoning** from **determini
 │  • Validates channel constraints & regulatory limits                    │
 │  • Outcome: ALLOWED | BLOCKED | ESCALATED                               │
 └────────────────────────────────────┬────────────────────────────────────┘
-                                     │ Approved Action
+                                     │ Validated ExecutionAuthorization
                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           ACTION EXECUTOR                               │
+│                     CONTROLLED EXECUTION SIMULATOR                      │
 │  • Smart scheduled retry                                                │
-│  • Dynamic payment link generation (Razorpay Test API)                  │
+│  • Dynamic payment link generation                                      │
 │  • Alternate payment method nudge (UPI, Netbanking)                     │
 │  • Human support escalation                                             │
 └────────────────────────────────────┬────────────────────────────────────┘
@@ -46,7 +46,7 @@ REVIVE solves this by separating **probabilistic AI reasoning** from **determini
 ```
 
 > [!IMPORTANT]
-> **Financial Authority Invariant**: The Large Language Model (LLM) possesses **zero direct financial authority**. All actions recommended by the AI layer must pass through the deterministic Policy Engine before any real or simulated financial action is executed.
+> **Decision Boundary Invariant**: The recommendation layer possesses **zero direct execution authority**. All actions recommended by contextual intelligence must pass through the deterministic Policy Engine to receive a validated `ExecutionAuthorization` before any simulated financial action is executed.
 
 ---
 
@@ -145,24 +145,24 @@ The lifecycle of every transaction failure event follows an invariant sequence:
 - **Storage**: SQLite database with migration capabilities for PostgreSQL.
 - **Audit Records**:
   - Exact failure event metadata.
-  - LLM prompt, context, and raw reasoning response.
+  - Contextual diagnosis, confidence score, and candidate recommendations.
   - Policy evaluation log (rules evaluated, rules passed, rules violated).
   - Executed action and timestamp.
   - Final financial outcome and calculated incremental uplift.
 
-### 4.9. Web Dashboard (`frontend/`)
-- **Role**: Intuitive, high-impact operator interface for merchants and judges.
+### 4.9. Web Dashboard (`server/static/`)
+- **Role**: Intuitive, high-density operator interface for engineering teams, merchants, and evaluators.
 - **Key Views**:
   - **Overview / Metrics**: Live recovered revenue, recovery rate vs baselines, active recovery queue.
-  - **Agent Decision Stream**: Real-time event log with explainability drawers showing AI reasoning vs Policy decisions.
+  - **Decision Stream**: Real-time event log with explainability drawers showing contextual diagnosis vs Policy decisions.
   - **Simulation & Benchmark Lab**: Interactive controls to run synthetic batches, toggle baselines, and inspect lift.
-  - **Policy Configuration**: Visual rule builder for merchants to customize safety bounds.
+  - **Policy Configuration**: Visual inspection of safety bounds and rule hierarchy.
 
 ---
 
 ## 5. Security, Risk & Governance Model
 
 1. **Zero Secret Exposure**: All credentials managed strictly via environment variables (`.env`). No secrets committed to version control.
-2. **Deterministic Veto**: No LLM recommendation can bypass the Policy Gate. If the Policy Engine rejects an action, the executor cannot run it.
+2. **Deterministic Veto**: No candidate recommendation can bypass the Policy Gate. If the Policy Engine rejects an action, the executor cannot run it.
 3. **Idempotency**: Every recovery action is assigned an idempotency key to prevent duplicate charges or overlapping retries.
-4. **Graceful Degradation**: If AI reasoning fails or exceeds latency timeouts, system falls back to the deterministic rule-based baseline without dropping transactions.
+4. **Graceful Degradation**: If diagnosis fails or encounters corrupted context, system fails closed to `HUMAN_REVIEW` or `NO_ACTION_TAKEN`.

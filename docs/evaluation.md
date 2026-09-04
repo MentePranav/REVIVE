@@ -1,11 +1,11 @@
-﻿# REVIVE — Experimental Evaluation, Holdout Benchmarking & Revenue Recovery Proof
+# REVIVE — Experimental Evaluation, Holdout Benchmarking & Revenue Recovery Proof
 
 ## 1. Executive Summary & Purpose
 
 The **REVIVE Experimental Evaluation Framework** provides a scientifically grounded benchmarking system to prove whether REVIVE recovers incremental revenue over baseline strategies while strictly enforcing safety, customer fatigue limits, and zero-trust policy governance.
 
 > [!IMPORTANT]
-> **Simulation Disclaimer**: All benchmarks operate exclusively on synthetic datasets generated for the Razorpay AI Buildathon 2026. All financial amounts and recovery rates represent controlled simulation outcomes rather than real Razorpay production figures.
+> **Simulation Disclaimer**: All benchmarks operate exclusively on synthetic datasets generated in a controlled evaluation environment. All financial amounts and recovery rates represent controlled simulation outcomes rather than live production figures.
 
 ```
 ┌────────────────────────────────────────────────────────┐

@@ -1,4 +1,4 @@
-﻿"""
+"""
 Benchmark Report Generator and Exporter for REVIVE Phase 7.
 Generates comprehensive human-readable BENCHMARK_REPORT.md and machine-readable JSON/CSV artifacts.
 """
@@ -46,13 +46,13 @@ class BenchmarkReporter:
         md = f"""# REVIVE — Experimental Evaluation & Holdout Benchmark Report
 
 > **DISCLAIMER: SYNTHETIC EVALUATION ONLY**  
-> All transactions, failures, recovery simulations, customer behaviors, and financial amounts in this benchmark represent **controlled synthetic simulations** generated for the Razorpay AI Buildathon 2026 prototype evaluation. They do **not** represent real Razorpay production revenue, live merchant data, or guaranteed real-world recovery rates.
+> All transactions, failures, recovery simulations, customer behaviors, and financial amounts in this benchmark represent **controlled synthetic simulations** generated for prototype evaluation. They do **not** represent real production revenue, live merchant data, or guaranteed real-world recovery rates.
 
 ---
 
 ## 1. Executive Summary
 
-This report documents the scientific evaluation of **REVIVE (Autonomous Revenue Recovery Agent)** across **{len(report.seeds_evaluated)} independent, unseen holdout datasets** ({report.seeds_evaluated}), each containing **{config.eval_transaction_count:,} transactions**.
+This report documents the scientific evaluation of **REVIVE (Autonomous Revenue Recovery Decision System)** across **{len(report.seeds_evaluated)} independent, unseen holdout datasets** ({report.seeds_evaluated}), each containing **{config.eval_transaction_count:,} transactions**.
 
 All model thresholds and confidence bounds were frozen exclusively on an independent development dataset (Seed {config.dev_seed}) prior to holdout evaluation.
 

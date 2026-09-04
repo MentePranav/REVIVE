@@ -1,9 +1,8 @@
-﻿# REVIVE — Final Release Candidate Report
+# REVIVE — Final Release Candidate Report
 
-**Buildathon Track:** Track 3: AI Revenue Recovery — Razorpay AI Buildathon 2026  
-**Status:** Release Candidate Ready for Human Review  
-**Date:** September 2026  
-**License:** Apache License 2.0  
+**Project Status:** Release Candidate Ready for Review
+**Date:** September 2026
+**License:** Apache License 2.0
 
 ---
 
@@ -31,10 +30,10 @@ Evaluated across 5 independent holdout seeds (Seeds 101, 202, 303, 404, 505) wit
 
 | Strategy | Mean Recovered Revenue | Recovery Rate (Failed Opps) | Interventions per 10k | Intervention Precision | Human Review Escalation | High-Risk Leaks |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`NO_ACTION`** | ?71,342.40 | 0.94% | 0 | 0.00% | 0 | 0 |
-| **`NAIVE_RETRY`** | ?809,172.38 | 10.86% | 1,342.4 | 30.84% | 0 | 18 |
-| **`RULE_BASED`** | ?3,626,512.01 | 48.58% | 1,690.0 | 69.46% | 0 | 29 |
-| **`REVIVE`** *(Governed)* | **?2,726,857.62** | **36.53%** | **1,312.0** | **56.04%** | **624 (5.64%)** | **0** |
+| **`NO_ACTION`** | ₹71,342.40 | 0.94% | 0 | 0.00% | 0 | 0 |
+| **`NAIVE_RETRY`** | ₹809,172.38 | 10.86% | 1,342.4 | 30.84% | 0 | 18 |
+| **`RULE_BASED`** | ₹3,626,512.01 | 48.58% | 1,690.0 | 69.46% | 0 | 29 |
+| **`REVIVE`** *(Governed)* | **₹2,726,857.62** | **36.53%** | **1,312.0** | **56.04%** | **624 (5.64%)** | **0** |
 
 ### Verified Tradeoff & Positioning:
 - **`RULE_BASED`** achieved higher raw synthetic recovery by operating with unconstrained aggression (retrying high-risk accounts, ignoring fatigue limits).
@@ -95,26 +94,25 @@ python -m server.cli --port 8000 --host 127.0.0.1
 | [`docs/safety-and-governance.md`](safety-and-governance.md) | Zero-trust execution and policy gate specifications |
 | [`docs/failure-analysis.md`](failure-analysis.md) | Risk taxonomy, failure modes, and pre-production validation plan |
 | [`docs/red-team-validation.md`](red-team-validation.md) | Phase 11 adversarial penetration testing and hardening report |
-| [`docs/evidence-map.md`](evidence-map.md) | Traceability matrix mapping buildathon requirements to source code |
+| [`docs/evidence-map.md`](evidence-map.md) | Traceability matrix mapping system requirements to source code |
 
 ---
 
 ## 8. Known Scope & Limitations (Disclosed)
 
 - **Synthetic Simulation:** All evaluations are conducted within a controlled synthetic payment and customer lifecycle simulator.
-- **Production Pre-requisites:** Production deployment would require live Razorpay webhook ingress (`payment.failed`, `order.paid`), merchant authentication, asynchronous task queues (e.g. Kafka), and live canary A/B testing on merchant traffic.
+- **Production Pre-requisites:** Production deployment would require live payment gateway webhook ingress (`payment.failed`, `order.paid`), merchant authentication, asynchronous task queues (e.g. Kafka), and live canary A/B testing on merchant traffic.
 
 ---
 
-## 9. Manual Submission Steps for Human Operator
+## 9. Next Steps for Public Release
 
-The software is frozen and verified. To submit the project to the Razorpay AI Buildathon:
+The software is frozen and verified:
 
 1. **Review Final Candidate:** Review code and documentation locally.
 2. **Push to Public GitHub Repository:**
    ```bash
-   git remote add origin https://github.com/<your-username>/REVIVE.git
+   git remote add origin https://github.com/MentePranav/REVIVE.git
    git push -u origin master
    ```
-3. **Record Demo Video:** Follow [`docs/demo-runbook.md`](demo-runbook.md) and [`docs/pitch-script.md`](pitch-script.md) to record the 3–5 minute Loom/YouTube walkthrough.
-4. **Submit Entry:** Submit the GitHub repository link and demo video on the Razorpay AI Buildathon portal (Track 3: AI Revenue Recovery).
+3. **Record Demo Video:** Follow [`docs/demo-runbook.md`](demo-runbook.md) and [`docs/pitch-script.md`](pitch-script.md) for demonstration recordings.
