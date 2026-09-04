@@ -276,6 +276,13 @@ function renderCasesTable(cases) {
     const execStatEsc = escapeHtml(c.execution_status);
     const recOutEsc = escapeHtml(c.recovery_outcome);
 
+    tr.className = "case-row";
+    tr.setAttribute("data-id", eventIdEsc);
+    tr.setAttribute("tabindex", "0");
+    tr.setAttribute("role", "button");
+    tr.setAttribute("aria-label", `Inspect recovery case ${eventIdEsc}`);
+    tr.style.cursor = "pointer";
+
     tr.innerHTML = `
       <td><code class="code-tag">${eventIdEsc}</code></td>
       <td><code class="code-tag">${custIdEsc}</code></td>
@@ -288,11 +295,23 @@ function renderCasesTable(cases) {
       <td>${c.recovered_amount > 0 ? `<strong class="text-green">${formatINR(c.recovered_amount)}</strong>` : `<span class="status-pill">${recOutEsc}</span>`}</td>
       <td><button class="btn btn-inspect" data-id="${eventIdEsc}" title="Inspect full decision chain">Inspect →</button></td>
     `;
+
+    tr.addEventListener("click", () => openCaseDetail(c.event_id));
+    tr.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openCaseDetail(c.event_id);
+      }
+    });
+
     tbody.appendChild(tr);
   });
 
   document.querySelectorAll(".btn-inspect").forEach(btn => {
-    btn.addEventListener("click", () => openCaseDetail(btn.getAttribute("data-id")));
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openCaseDetail(btn.getAttribute("data-id"));
+    });
   });
 }
 
@@ -453,7 +472,34 @@ async function openCaseDetail(eventId) {
       }
     }
 
-    if (caseModal) caseModal.classList.remove("hidden");
+    // Update Decision Chain Visual Flow Steps
+    const stepAuth = document.getElementById("chain-step-5");
+    const stepExec = document.getElementById("chain-step-6");
+    const stepOut = document.getElementById("chain-step-7");
+    if (stepAuth) {
+      if (d.authorization_id && d.policy_decision === "ALLOW") {
+        stepAuth.classList.add("active");
+      } else {
+        stepAuth.classList.remove("active");
+      }
+    }
+    if (stepExec) {
+      if (d.execution_status === "EXECUTED") {
+        stepExec.classList.add("active");
+      } else {
+        stepExec.classList.remove("active");
+      }
+    }
+    if (stepOut) {
+      if (d.execution_status === "EXECUTED") {
+        stepOut.classList.add("active");
+      } else {
+        stepOut.classList.remove("active");
+      }
+    }
+
+    const modalEl = document.getElementById("case-modal") || caseModal;
+    if (modalEl) modalEl.classList.remove("hidden");
   } catch (err) {
     alert("Failed to load case: " + err.message);
   } finally {
@@ -462,11 +508,20 @@ async function openCaseDetail(eventId) {
 }
 
 // Modal Close Handlers
+function closeModal() {
+  const modalEl = document.getElementById("case-modal") || caseModal;
+  if (modalEl) modalEl.classList.add("hidden");
+}
+
 const modalCloseBtn = document.getElementById("modal-close-btn");
-if (modalCloseBtn) modalCloseBtn.addEventListener("click", () => caseModal && caseModal.classList.add("hidden"));
+if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeModal);
 
 const modalBackdrop = document.querySelector(".modal-backdrop");
-if (modalBackdrop) modalBackdrop.addEventListener("click", () => caseModal && caseModal.classList.add("hidden"));
+if (modalBackdrop) modalBackdrop.addEventListener("click", closeModal);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeModal();
+});
 
 // Modal Execute Recovery Action (Protected against double-clicks)
 const modalBtnExecute = document.getElementById("modal-btn-execute");

@@ -571,6 +571,16 @@ body {
   background-color: var(--bg-card-hover);
 }
 
+.data-table tr.case-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.data-table tr.case-row:focus {
+  outline: 2px solid var(--color-blue);
+  outline-offset: -2px;
+}
+
 .text-center {
   text-align: center;
 }
