@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="/static/landing.css">
 </head>
 <body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
   <!-- Sticky Navigation Header -->
   <header class="navbar" id="navbar">
@@ -21,25 +22,25 @@
         <span class="brand-tag">v1.0 • Prototype</span>
       </div>
 
-      <nav class="nav-links" id="nav-links">
+      <nav class="nav-links" id="nav-links" aria-label="Main Navigation">
         <a href="#overview" class="nav-link">Overview</a>
         <a href="#problem" class="nav-link">The Problem</a>
         <a href="#how-it-works" class="nav-link">How It Works</a>
         <a href="#intelligence" class="nav-link">Intelligence</a>
-        <a href="#safety" class="nav-link">Safety & Governance</a>
+        <a href="#safety" class="nav-link">Safety</a>
         <a href="#benchmark" class="nav-link">Benchmark</a>
         <a href="#architecture" class="nav-link">Architecture</a>
         <a href="#limitations" class="nav-link">Limitations</a>
       </nav>
 
       <div class="nav-actions">
-        <a href="https://github.com/MentePranav/REVIVE" target="_blank" rel="noopener noreferrer" class="btn btn-outline" title="View Source on GitHub">
-          <span>GitHub</span> ↗
+        <a href="https://github.com/MentePranav/REVIVE" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-nav-gh" title="View Source on GitHub">
+          <span>GitHub</span> <span class="btn-arrow">↗</span>
         </a>
-        <a href="/control-center" class="btn btn-primary" title="Launch Interactive Control Center">
-          <span>Launch Demo</span> →
+        <a href="/control-center" class="btn btn-primary btn-nav-demo" title="Launch Interactive Control Center">
+          <span>Launch Demo</span> <span class="btn-arrow">→</span>
         </a>
-        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
           ☰
         </button>
       </div>
@@ -49,33 +50,131 @@
   <!-- Hero Section -->
   <section class="hero-section" id="overview">
     <div class="hero-glow"></div>
-    <div class="container hero-content">
-      <div class="hero-status-badge">
-        <span class="pulse-dot"></span>
-        <span>SYNTHETIC EVALUATION ENVIRONMENT</span>
+    <div class="container hero-container">
+
+      <!-- Left Column: Product Positioning & CTAs -->
+      <div class="hero-content">
+        <div class="hero-status-badge">
+          <span class="pulse-dot"></span>
+          <span>SYNTHETIC EVALUATION ENVIRONMENT</span>
+        </div>
+
+        <div class="hero-brand-group">
+          <h1 class="hero-title">REVIVE</h1>
+          <span class="hero-category-tag">DECISION ENGINE</span>
+        </div>
+
+        <h2 class="hero-tagline-statement">
+          Recover more revenue.<br>
+          Intervene less.<br>
+          <span class="text-gradient">Stay in control.</span>
+        </h2>
+
+        <p class="hero-desc">
+          REVIVE analyzes failed-payment context, estimates recoverability, selects an optimal recovery action, and routes it through deterministic safety gates before simulated execution.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/control-center" class="btn btn-primary btn-hero" title="Launch Interactive Control Center Demo">
+            <span>Launch Interactive Demo</span> <span class="btn-arrow">→</span>
+          </a>
+          <a href="https://github.com/MentePranav/REVIVE" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-hero-sec" title="View Source on GitHub">
+            <span>View on GitHub</span> <span class="btn-arrow">↗</span>
+          </a>
+        </div>
+
+        <div class="hero-disclaimer-quiet">
+          <span class="quiet-shield">🛡️</span>
+          <span>Simulation-only prototype • No live payment credentials or real customer data</span>
+        </div>
       </div>
 
-      <h1 class="hero-title">REVIVE</h1>
-      <h2 class="hero-subtitle">Autonomous Revenue Recovery Decision System</h2>
-      <p class="hero-tagline"><em>Recover more revenue. Intervene less. Stay in control.</em></p>
+      <!-- Right Column: Living Decision Pipeline Visualization -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="pipeline-canvas">
 
-      <p class="hero-desc">
-        REVIVE analyzes failed-payment context, diagnoses likely failure modes, estimates recoverability, selects an appropriate recovery action, and routes that decision through explicit safety and governance gates before simulated execution.
-      </p>
+          <div class="pipeline-header">
+            <div class="pipeline-status">
+              <span class="pulse-dot-cyan"></span>
+              <span class="pipeline-label">AUTONOMOUS DECISION PIPELINE</span>
+            </div>
+            <span class="pipeline-mode">GOVERNED SIMULATION</span>
+          </div>
 
-      <div class="hero-actions">
-        <a href="/control-center" class="btn btn-primary btn-large">
-          <span>Launch Interactive Demo</span> →
-        </a>
-        <a href="https://github.com/MentePranav/REVIVE" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-large">
-          <span>View on GitHub</span> ↗
-        </a>
+          <div class="pipeline-stream">
+            <!-- Stage 1: Diagnosis -->
+            <div class="pipe-node node-diag">
+              <div class="node-head">
+                <span class="node-num">01 / DIAGNOSIS</span>
+                <span class="node-confidence">94.2% CONFIDENCE</span>
+              </div>
+              <div class="node-body">
+                <span class="node-primary">INSUFFICIENT_FUNDS</span>
+                <span class="node-secondary">evt_synth_1042 • ₹4,500.00 • Salary Window</span>
+              </div>
+            </div>
+
+            <!-- Signal Connector 1 -->
+            <div class="signal-track">
+              <div class="signal-flow-dot"></div>
+            </div>
+
+            <!-- Stage 2: Central Focal Point - DECISION CORE -->
+            <div class="pipe-node node-core-focal">
+              <div class="core-focal-glow"></div>
+              <div class="node-head">
+                <span class="core-tag">02 / DECISION CORE</span>
+                <span class="core-ev text-blue">EV: +₹4,500.00</span>
+              </div>
+              <div class="node-body">
+                <span class="core-action">SCHEDULED_RETRY</span>
+                <span class="core-sub">Target: 1st of Month • Channel: Auto-Debit</span>
+              </div>
+            </div>
+
+            <!-- Signal Connector 2 -->
+            <div class="signal-track">
+              <div class="signal-flow-dot"></div>
+            </div>
+
+            <!-- Stage 3: Policy & Safety Gate -->
+            <div class="pipe-node node-gate">
+              <div class="node-head">
+                <span class="node-num text-yellow">03 / POLICY GATES</span>
+                <span class="node-gate-pass">POLICY: PASS</span>
+              </div>
+              <div class="gate-pills">
+                <span class="gate-pill">✓ P003 Limit 1/2</span>
+                <span class="gate-pill">✓ P004 Conf ≥ 0.85</span>
+                <span class="gate-pill">✓ P005 Zero Fraud</span>
+              </div>
+              <div class="auth-bar">
+                <span class="auth-label">ExecutionAuthorization:</span>
+                <span class="auth-token text-mono text-green">auth_a8f92b7c41</span>
+              </div>
+            </div>
+
+            <!-- Signal Connector 3 -->
+            <div class="signal-track">
+              <div class="signal-flow-dot"></div>
+            </div>
+
+            <!-- Stage 4: Governed Outcome -->
+            <div class="pipe-node node-out">
+              <div class="node-head">
+                <span class="node-num">04 / SIMULATED OUTCOME</span>
+                <span class="node-uplift text-green">ΔR: +₹4,500.00</span>
+              </div>
+              <div class="out-row">
+                <span class="out-check">✓</span>
+                <span class="out-msg">Recovery Captured • Immutable Audit Telemetry Persisted</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <div class="hero-disclaimer-box">
-        <span class="hero-disclaimer-icon">🛡️</span>
-        <span><strong>Simulation-only prototype.</strong> No real payments, customer data, or live payment credentials are used.</span>
-      </div>
     </div>
   </section>
 
@@ -84,26 +183,32 @@
     <div class="container">
       <div class="metrics-grid">
         <div class="metric-item">
+          <span class="metric-category">DATASET</span>
           <div class="metric-value">50,000</div>
           <div class="metric-label">Synthetic Holdout Transactions</div>
         </div>
         <div class="metric-item">
+          <span class="metric-category">EVALUATION</span>
           <div class="metric-value">5</div>
           <div class="metric-label">Independent Evaluation Seeds</div>
         </div>
         <div class="metric-item">
+          <span class="metric-category">TEST SUITE</span>
           <div class="metric-value text-green">226</div>
           <div class="metric-label">Automated Tests Passing</div>
         </div>
         <div class="metric-item">
+          <span class="metric-category">SECURITY</span>
           <div class="metric-value text-blue">0</div>
           <div class="metric-label">High-Risk Leaks in Benchmark</div>
         </div>
         <div class="metric-item">
+          <span class="metric-category">GROSS CAPTURE</span>
           <div class="metric-value text-gradient">75.19%</div>
           <div class="metric-label">Of RULE_BASED Gross Recovered</div>
         </div>
         <div class="metric-item">
+          <span class="metric-category">EFFICIENCY</span>
           <div class="metric-value text-yellow">22.37%</div>
           <div class="metric-label">Fewer Interventions Needed</div>
         </div>
@@ -117,7 +222,7 @@
   <!-- Problem Section -->
   <section class="section" id="problem">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <span class="section-tag">The Core Challenge</span>
         <h2 class="section-title">Failed payments are not all the same.</h2>
         <p class="section-desc">
@@ -125,7 +230,7 @@
         </p>
       </div>
 
-      <div class="problem-grid">
+      <div class="problem-grid reveal-on-scroll">
         <div class="problem-card">
           <div class="problem-icon-wrapper icon-yellow">⚠️</div>
           <h3 class="problem-card-title">Customer Fatigue & Churn</h3>
@@ -159,7 +264,7 @@
         </div>
       </div>
 
-      <div class="philosophy-banner">
+      <div class="philosophy-banner reveal-on-scroll">
         <div class="philosophy-icon">💡</div>
         <div class="philosophy-text">
           <h4>The REVIVE Philosophy</h4>
@@ -174,7 +279,7 @@
   <!-- How REVIVE Works Section -->
   <section class="section section-alt" id="how-it-works">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <span class="section-tag">End-to-End Workflow</span>
         <h2 class="section-title">From failed payment to governed recovery</h2>
         <p class="section-desc">
@@ -182,7 +287,7 @@
         </p>
       </div>
 
-      <div class="workflow-grid">
+      <div class="workflow-grid reveal-on-scroll">
         <div class="workflow-card">
           <span class="step-num">01</span>
           <h3 class="workflow-card-title">Failed Payment</h3>
@@ -256,7 +361,7 @@
         </div>
       </div>
 
-      <div class="boundary-callout">
+      <div class="boundary-callout reveal-on-scroll">
         <div class="boundary-left">
           <div class="boundary-shield-icon">🛡️</div>
           <div>
@@ -274,7 +379,7 @@
   <!-- Decision Intelligence Section -->
   <section class="section" id="intelligence">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <span class="section-tag">Contextual Reasoning</span>
         <h2 class="section-title">Context-aware recovery decisions</h2>
         <p class="section-desc">
@@ -282,7 +387,7 @@
         </p>
       </div>
 
-      <div class="intelligence-grid">
+      <div class="intelligence-grid reveal-on-scroll">
         <div class="intelligence-card">
           <span class="intelligence-tag">TAXONOMY ENGINE</span>
           <h3 class="intelligence-card-title">Root-Cause Categorization</h3>
@@ -337,7 +442,7 @@
   <!-- Safety & Governance Section -->
   <section class="section section-alt" id="safety">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <span class="section-tag">Deterministic Policy Engine</span>
         <h2 class="section-title">Automation with guardrails</h2>
         <p class="section-desc">
@@ -345,7 +450,7 @@
         </p>
       </div>
 
-      <div class="safety-grid">
+      <div class="safety-grid reveal-on-scroll">
         <div class="safety-card">
           <div class="safety-header">
             <span class="rule-code-badge">P004</span>
@@ -418,7 +523,7 @@
   <!-- Benchmark Section -->
   <section class="section" id="benchmark">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <div class="benchmark-header-badge">
           <span>🔬</span>
           <span>Canonical 50,000-Transaction Holdout Benchmark (Seeds 101–505)</span>
@@ -430,7 +535,7 @@
       </div>
 
       <!-- Primary Architectural Tradeoff Banner -->
-      <div class="tradeoff-banner">
+      <div class="tradeoff-banner reveal-on-scroll">
         <div class="tradeoff-banner-title">
           <span>⚖️</span>
           <span>Primary Architectural Tradeoff</span>
@@ -444,7 +549,7 @@
       </div>
 
       <!-- Canonical Benchmark Table -->
-      <div class="benchmark-table-wrapper">
+      <div class="benchmark-table-wrapper reveal-on-scroll">
         <div class="table-responsive">
           <table class="benchmark-table">
             <thead>
@@ -496,7 +601,7 @@
       </div>
 
       <!-- Visual Tradeoff Comparison (Pure CSS Bars) -->
-      <div class="tradeoff-visual-grid">
+      <div class="tradeoff-visual-grid reveal-on-scroll">
         <div class="visual-chart-card">
           <div class="visual-chart-title">Gross Revenue Recovered (Mean)</div>
           <div class="visual-chart-subtitle">Higher indicates greater total synthetic currency captured</div>
@@ -575,7 +680,7 @@
       </div>
 
       <!-- Safety Comparison & High-Risk Leaks -->
-      <div class="safety-leaks-panel">
+      <div class="safety-leaks-panel reveal-on-scroll">
         <div class="safety-leaks-header">
           <div>
             <div class="safety-leaks-title">🛡️ Safety & Risk Boundary Comparison (High-Risk Leaks)</div>
@@ -610,7 +715,7 @@
       </div>
 
       <!-- Statistical Calibration & Accounting Integrity -->
-      <div class="eval-stats-grid">
+      <div class="eval-stats-grid reveal-on-scroll">
         <div class="eval-stat-card">
           <div class="eval-stat-label">Bootstrap 95% CI — REVIVE Incremental Revenue</div>
           <div class="eval-stat-val text-green">₹2.53M – ₹2.79M</div>
@@ -642,7 +747,7 @@
       </div>
 
       <!-- Experiment Methodology & Reproducibility -->
-      <div class="methodology-panel">
+      <div class="methodology-panel reveal-on-scroll">
         <div class="methodology-header">
           <span>⚙️</span>
           <span>Evaluation Methodology & Reproducibility</span>
@@ -680,7 +785,7 @@
       </div>
 
       <!-- Evidence Hierarchy -->
-      <div class="evidence-hierarchy-grid">
+      <div class="evidence-hierarchy-grid reveal-on-scroll">
         <div class="evidence-col col-demonstrates">
           <div class="evidence-col-title">
             <span>✓</span>
@@ -712,7 +817,7 @@
       </div>
 
       <!-- Documentation & Evidence Source Links -->
-      <div class="artifact-links-panel">
+      <div class="artifact-links-panel reveal-on-scroll">
         <div class="artifact-links-title">Repository Documentation & Benchmark Artifacts</div>
         <div class="artifact-links-flex">
           <a href="https://github.com/MentePranav/REVIVE/blob/master/docs/final-benchmark-audit.md" target="_blank" rel="noopener noreferrer" class="artifact-link-item">
@@ -739,7 +844,7 @@
   <!-- Interactive Control Center Preview -->
   <section class="section section-alt" id="control-center-preview">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <span class="section-tag">Interactive Demo</span>
         <h2 class="section-title">See the system in action.</h2>
         <p class="section-desc">
@@ -747,7 +852,7 @@
         </p>
       </div>
 
-      <div class="preview-panel">
+      <div class="preview-panel reveal-on-scroll">
         <div class="preview-bar">
           <div class="window-dots">
             <span class="dot dot-red"></span>
@@ -758,14 +863,14 @@
           <div style="font-size: 11px; color: var(--text-muted);">Seed: 42 (Synthetic)</div>
         </div>
 
-        <div style="padding: 16px 32px 0; display: flex; gap: 10px; border-bottom: 1px solid var(--border-subtle);">
-          <button class="btn btn-secondary mock-scenario-btn active" data-scenario="insufficient_funds">
+        <div style="padding: 16px 32px 0; display: flex; gap: 10px; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary mock-scenario-btn active" data-scenario="insufficient_funds">
             Scenario 1: Salary Timing Delay
           </button>
-          <button class="btn btn-secondary mock-scenario-btn" data-scenario="abandoned_otp">
+          <button type="button" class="btn btn-secondary mock-scenario-btn" data-scenario="abandoned_otp">
             Scenario 2: High-Intent OTP Drop
           </button>
-          <button class="btn btn-secondary mock-scenario-btn" data-scenario="high_risk">
+          <button type="button" class="btn btn-secondary mock-scenario-btn" data-scenario="high_risk">
             Scenario 3: High-Risk Velocity Spike
           </button>
         </div>
@@ -829,9 +934,9 @@
         </div>
       </div>
 
-      <div class="preview-cta-wrapper">
-        <a href="/control-center" class="btn btn-primary btn-large">
-          <span>Launch Interactive Control Center</span> →
+      <div class="preview-cta-wrapper reveal-on-scroll">
+        <a href="/control-center" class="btn btn-primary btn-large" title="Launch Interactive Control Center">
+          <span>Launch Interactive Control Center</span> <span class="btn-arrow">→</span>
         </a>
       </div>
     </div>
@@ -840,7 +945,7 @@
   <!-- Architecture Section -->
   <section class="section" id="architecture">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <span class="section-tag">System Design</span>
         <h2 class="section-title">System Architecture</h2>
         <p class="section-desc">
@@ -848,7 +953,7 @@
         </p>
       </div>
 
-      <div class="architecture-flow">
+      <div class="architecture-flow reveal-on-scroll">
         <div class="arch-node">
           <span class="arch-node-title">1. Synthetic Transaction</span>
           <span class="arch-node-desc">Error codes, amount, customer history</span>
@@ -908,7 +1013,7 @@
   <!-- Limitations Section -->
   <section class="section section-alt" id="limitations">
     <div class="container">
-      <div class="section-header">
+      <div class="section-header reveal-on-scroll">
         <span class="section-tag">Scientific Integrity</span>
         <h2 class="section-title">What REVIVE is — and isn't</h2>
         <p class="section-desc">
@@ -916,7 +1021,7 @@
         </p>
       </div>
 
-      <div class="limitations-grid">
+      <div class="limitations-grid reveal-on-scroll">
         <div class="limitations-card">
           <h3 class="text-green"><span>✓</span> What REVIVE Is</h3>
           <ul class="limitations-list">
@@ -970,7 +1075,7 @@
       <div class="footer-top">
         <div class="footer-brand">
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-            <span class="brand-badge">REVIVE</span>
+            <a href="/" class="brand-badge" title="REVIVE Home">REVIVE</a>
             <span style="font-weight: 700; color: #fff;">Decision System</span>
           </div>
           <p>Autonomous Revenue Recovery Decision System</p>
